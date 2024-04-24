@@ -1,9 +1,10 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { RegisterPayload } from './register.model';
 
 @Controller('register')
 export class RegisterController {
   @Post()
-  registerUser(@Req() request: Request) {
-    console.log(request);
+  registerUser(@Body() registerPayload: RegisterPayload) {
+    console.log(registerPayload);
   }
 }
