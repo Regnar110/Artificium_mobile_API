@@ -5,13 +5,16 @@ import { RegisterController } from './controllers/HubPage/register/register.cont
 import { ConfigModule } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersService } from './modules/UserModule/user.service';
+import { UserModule } from './modules/UserModule/user.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URI),
     ConfigModule.forRoot({
       load: [configuration],
     }),
+    MongooseModule.forRoot(process.env.MONGO_URI, { dbName: 'Root' }),
+    UserModule,
   ],
   controllers: [AppController, RegisterController],
   providers: [AppService],

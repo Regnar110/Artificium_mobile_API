@@ -8,10 +8,10 @@ export class User {
   email: string;
 
   @Prop()
-  first_name: string;
+  firstname: string;
 
   @Prop()
-  last_name: string;
+  lastname: string;
 
   @Prop()
   password: string;
