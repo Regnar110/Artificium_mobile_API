@@ -12,7 +12,7 @@ import { UserController } from './modules/UserModule/controller/user.controller'
     ConfigModule.forRoot({
       load: [configuration],
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI, { dbName: 'Root' }),
+    MongooseModule.forRoot(process.env.MONGO_URI, { dbName: 'Artificium' }),
     UserModule,
   ],
   controllers: [AppController, UserController],

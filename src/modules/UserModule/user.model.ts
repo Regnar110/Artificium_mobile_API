@@ -11,3 +11,14 @@ export interface RegisterPayload {
   };
   agreementFields: AgreementContentInterface[];
 }
+
+export type SignInPayload = {
+  fields: Pick<RegisterPayload['fields'], 'email' | 'password'>;
+};
+
+export type x = keyof SignInPayload;
+
+export interface ProcessedSignInCredentials {
+  email: string;
+  password: string;
+}

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AgreementSchema } from './agreements.schema';
 import { AgreementContentInterface } from './schema.model';
 
-@Schema()
+@Schema({ versionKey: false })
 export class User {
   @Prop()
   email: string;

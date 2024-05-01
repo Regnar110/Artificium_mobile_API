@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema()
+@Schema({ _id: false })
 export class Agreement {
   @Prop()
   agreementField: string;
