@@ -1,4 +1,4 @@
-import { AgreementContentInterface } from 'src/MongoDB/Schemas/registered_user/schema.model';
+import { AgreementContentInterface } from 'src/MongoDB/Schemas/user/schema.model';
 
 export class CreateUserDto {
   readonly email: string;

@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  User,
-  UserSchema,
-} from 'src/MongoDB/Schemas/registered_user/user.schema';
 import { UsersService } from './user.service';
-import { RegisterController } from 'src/controllers/HubPage/register/register.controller';
+import { UserController } from './controller/user.controller';
+import { User, UserSchema } from 'src/MongoDB/Schemas/user/user.schema';
 
 @Module({
   imports: [
@@ -16,7 +13,7 @@ import { RegisterController } from 'src/controllers/HubPage/register/register.co
       },
     ]),
   ],
-  controllers: [RegisterController],
+  controllers: [UserController],
   providers: [UsersService],
   exports: [UsersService],
 })
