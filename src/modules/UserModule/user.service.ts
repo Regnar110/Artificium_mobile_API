@@ -26,4 +26,8 @@ export class UsersService {
   }: ProcessedSignInCredentials): Promise<User> {
     return this.userModel.findOne({ email, password }).exec();
   }
+
+  async findUserWithEmail({ email }: { email: string }) {
+    return this.userModel.findOne({ email });
+  }
 }

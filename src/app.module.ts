@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './modules/UserModule/user.module';
-import { UserController } from './modules/UserModule/controller/user.controller';
 
 @Module({
   imports: [
@@ -15,7 +14,7 @@ import { UserController } from './modules/UserModule/controller/user.controller'
     MongooseModule.forRoot(process.env.MONGO_URI, { dbName: 'Artificium' }),
     UserModule,
   ],
-  controllers: [AppController, UserController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class BcryptService {
   constructor() {}
+
   async hashString(password: string, saltRounds = 10) {
     return await bcrypt.hash(password, saltRounds);
   }
