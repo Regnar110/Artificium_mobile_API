@@ -16,12 +16,15 @@ import {
   RegisterPayload,
 } from '../user.model';
 import { BcryptService } from 'src/services/bcrypt/bcrypt.service';
+import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBuilder.service';
+import { REDIRECT } from 'src/services/ResponseBuilder/redirectors.constant';
 
 @Controller('user')
 export class UserController {
   constructor(
     private readonly usersService: UsersService,
     private readonly bcryptService: BcryptService,
+    private readonly responseBuilder: ResponseBuilderService,
   ) {}
 
   @Post('signin')
@@ -35,21 +38,37 @@ export class UserController {
 
   @Post('register')
   @HttpCode(201)
+  /**
+   * @TODO try catch error catching and handling
+   * consider if there should be more try catches - even for single operations
+   */
   async register(@Body() body: RegisterPayload, @Res() res: Response) {
-    const userWithEmailExist = await this.usersService.findUserWithEmail({
-      email: body.fields.email.value,
-    });
+    try {
+      const userWithEmailExist = await this.usersService.findUserWithEmail({
+        email: body.fields.email.value,
+      });
 
-    if (userWithEmailExist) return;
+      if (userWithEmailExist) return;
 
-    body.fields.password.value = await this.bcryptService.hashString(
-      body.fields.password.value,
-    );
-    const x = await this.usersService.createUser(
-      UserRepo.extractFieldValue<User>(body),
-    );
-    
-    console.log(x)
-    res.status(HttpStatus.CREATED).send({ x: 1 });
+      body.fields.password.value = await this.bcryptService.hashString(
+        body.fields.password.value,
+      );
+      const x = await this.usersService.createUser(
+        UserRepo.extractFieldValue<User>(body),
+      );
+      this.responseBuilder.buildStandardResponse<{ x: string }>({
+        status: HttpStatus.CREATED,
+        textMessage: 'User registered successfully',
+        payload: {
+          redirect: REDIRECT.SIGN_IN,
+          data: {
+            x: '1',
+          },
+        },
+      });
+      return res.status(HttpStatus.CREATED).json({ x: 1 });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
