@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   HttpCode,
   HttpStatus,
   Post,
@@ -44,6 +45,7 @@ export class UserController {
    */
   async register(@Body() body: RegisterPayload, @Res() res: Response) {
     try {
+      throw new ForbiddenException();
       const userWithEmailExist = await this.usersService.findUserWithEmail({
         email: body.fields.email.value,
       });
@@ -56,9 +58,12 @@ export class UserController {
       const x = await this.usersService.createUser(
         UserRepo.extractFieldValue<User>(body),
       );
-      this.responseBuilder.buildStandardResponse<{ x: string }>({
+
+      const response = this.responseBuilder.buildStandardResponse<{
+        x: string;
+      }>({
         status: HttpStatus.CREATED,
-        textMessage: 'User registered successfully',
+        message: 'User registered successfully',
         payload: {
           redirect: REDIRECT.SIGN_IN,
           data: {
@@ -66,9 +71,17 @@ export class UserController {
           },
         },
       });
-      return res.status(HttpStatus.CREATED).json({ x: 1 });
+      return res.status(response.status).json(response);
     } catch (error) {
-      console.error(error);
+      console.log(error.status);
+      console.log(
+        Object.keys(HttpStatus).find((key, i) => i === Object.values(HttpStatus).findIndex(value => value === error.status))
+      );
+      const response = this.responseBuilder.buildStandardResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Provided by user.controller',
+      });
+      res.status(response.status).json(response);
     }
   }
 }
