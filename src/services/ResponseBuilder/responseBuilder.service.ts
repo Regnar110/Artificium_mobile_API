@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ResponseModelDto, StandardResponseType } from './responseModel.dto';
+import { getEnumKeyByEnumValue } from 'src/modules/UserModule/utils/getEnumKeyByEnumValue';
 
 @Injectable()
 export class ResponseBuilderService {
@@ -10,9 +11,9 @@ export class ResponseBuilderService {
     message = null,
     payload = { redirect: null, data: null },
   }: StandardResponseType<PayloadT>) {
-    return Object.assign(new ResponseModelDto(), {
+    return Object.assign(new ResponseModelDto<PayloadT>(), {
       status,
-      message: `${HttpStatus[HttpStatus[status]]}: ${message}`,
+      message: `${getEnumKeyByEnumValue(HttpStatus, status)}: ${message || ''}`,
       payload,
     });
   }

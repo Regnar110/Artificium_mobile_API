@@ -12,8 +12,8 @@ export type StandardResponseType<PayloadT> = {
 };
 
 
-export class ResponseModelDto {
+export class ResponseModelDto<PayloadT> {
   readonly status: number;
   readonly message: string | null;
-  readonly payload: DTOPayloadType<unknown> | null;
+  readonly payload: DTOPayloadType<PayloadT> | null;
 }
