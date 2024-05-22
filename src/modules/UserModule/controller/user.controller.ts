@@ -17,9 +17,9 @@ import {
 } from '../user.model';
 import { BcryptService } from 'src/services/bcrypt/bcrypt.service';
 import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBuilder.service';
-import { REDIRECT } from 'src/services/ResponseBuilder/redirectors.constant';
 import { TryCatch } from '../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
+import { EmailExistResponseData } from './responses.model';
 
 @Controller('user')
 export class UserController {
@@ -45,12 +45,13 @@ export class UserController {
     const userWithEmailExist = await this.usersService.findUserWithEmail({
       email: body.fields.email.value,
     });
-    console.log(body)
 
     if (userWithEmailExist) {
-      const response = this.responseBuilder.buildStandardResponse(
-        UserResponses.register.emailExist,
-      );
+      const response =
+        this.responseBuilder.buildStandardResponse<EmailExistResponseData>(
+          UserResponses.register.emailExist,
+        );
+
       return res.status(response.status).json(response);
     }
 

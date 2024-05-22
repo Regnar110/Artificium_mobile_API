@@ -1,4 +1,4 @@
 export enum REDIRECT {
-  SIGN_IN = 'signIn',
+  SIGN_IN = 'signin',
   REGISTER = 'register',
 };

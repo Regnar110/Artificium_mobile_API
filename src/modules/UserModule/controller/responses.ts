@@ -1,15 +1,16 @@
 import { HttpStatus } from '@nestjs/common';
 import { REDIRECT } from 'src/services/ResponseBuilder/redirectors.constant';
-import { ResponseModelDto } from 'src/services/ResponseBuilder/responseModel.dto';
 
 export const UserResponses = {
   register: {
     emailExist: {
       status: HttpStatus.CONFLICT,
-      message: 'User already exist',
+      message: 'User email already exist',
       payload: {
         redirect: null,
         data: {
+          formId: 'register',
+          field: 'email',
           clientMessage: 'This email is already used.',
         },
       },
