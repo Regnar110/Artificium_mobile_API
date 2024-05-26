@@ -2,14 +2,14 @@ import { HttpStatus } from '@nestjs/common';
 import { REDIRECT } from 'src/services/ResponseBuilder/redirectors.constant';
 
 export const UserResponses = {
-  register: {
+  registerForm: {
     emailExist: {
       status: HttpStatus.CONFLICT,
       message: 'User email already exist',
       payload: {
         redirect: null,
         data: {
-          formId: 'register',
+          formId: 'registerForm',
           field: 'email',
           clientMessage: 'This email is already used.',
         },
@@ -36,6 +36,20 @@ export const UserResponses = {
         data: {
           clientMessage:
             'Something went wrong. Please refresh the app and try again or contact us.',
+        },
+      },
+    },
+  },
+
+  signinForm: {
+    unauthorized: {
+      status: HttpStatus.UNAUTHORIZED,
+      message: 'Provided wrong credentials.',
+      payload: {
+        redirect: null,
+        data: {
+          formId: 'signinForm',
+          clientMessage: 'Provided wrong credentials.',
         },
       },
     },

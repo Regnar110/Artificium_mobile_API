@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
   Res,
@@ -31,11 +32,36 @@ export class UserController {
 
   @Post('signin')
   @HttpCode(200)
+  @TryCatch()
   async login(@Body() body: SignInPayload) {
-    const recievedUser = await this.usersService.getUser(
-      UserRepo.extractFieldValue<ProcessedSignInCredentials>(body),
+    console.log(body);
+    if (!body) throw new Error();
+
+    const extractedFieldValues =
+      UserRepo.extractFieldValue<ProcessedSignInCredentials>(body);
+
+    const recievedUser = await this.usersService.getUser(extractedFieldValues);
+
+    if (!recievedUser) {
+      this.responseBuilder.buildStandardResponse(
+        UserResponses.signinForm.unauthorized,
+      );
+    }
+
+    const isPasswordMatch = await this.bcryptService.compare(
+      extractedFieldValues.password,
+      recievedUser.password,
     );
-    console.log(recievedUser);
+
+    if (!isPasswordMatch) {
+      this.responseBuilder.buildStandardResponse(
+        UserResponses.signinForm.unauthorized,
+      );
+    }
+
+    /**
+     * @TODO JWT TOKEN RETURN FROM THIS POINT.
+     */
   }
 
   @Post('register')
@@ -49,7 +75,7 @@ export class UserController {
     if (userWithEmailExist) {
       const response =
         this.responseBuilder.buildStandardResponse<EmailExistResponseData>(
-          UserResponses.register.emailExist,
+          UserResponses.registerForm.emailExist,
         );
 
       return res.status(response.status).json(response);
@@ -66,12 +92,12 @@ export class UserController {
     if ('email' in createdUser) {
       const response = this.responseBuilder.buildStandardResponse<{
         clientMessage: string;
-      }>(UserResponses.register.userCreated);
+      }>(UserResponses.registerForm.userCreated);
       return res.status(response.status).json(response);
     } else {
       const response = this.responseBuilder.buildStandardResponse<{
         clientMessage: string;
-      }>(UserResponses.register.userNotCreated);
+      }>(UserResponses.registerForm.userNotCreated);
       return res.status(response.status).json(response);
     }
   }

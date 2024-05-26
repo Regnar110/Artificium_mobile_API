@@ -24,7 +24,10 @@ export class UsersService {
     email,
     password,
   }: ProcessedSignInCredentials): Promise<User> {
-    return this.userModel.findOne({ email, password }).exec();
+    const query = this.userModel
+      .findOne({ email })
+      .select({ _id: 0, email: 1, firstname: 1, lastname: 1, password: 1 });
+    return query.exec();
   }
 
   async findUserWithEmail({ email }: { email: string }) {
