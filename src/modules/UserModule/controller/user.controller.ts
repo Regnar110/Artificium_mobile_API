@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from 'src/modules/UserModule/user.service';
 import UserRepo from '../utils/user.util';
@@ -34,7 +26,6 @@ export class UserController {
   @HttpCode(200)
   @TryCatch()
   async login(@Body() body: SignInPayload) {
-    console.log(body);
     if (!body) throw new Error();
 
     const extractedFieldValues =

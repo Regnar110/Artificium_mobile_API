@@ -5,6 +5,7 @@ import { UserController } from './controller/user.controller';
 import { User, UserSchema } from 'src/MongoDB/Schemas/user/user.schema';
 import { BcryptService } from 'src/services/bcrypt/bcrypt.service';
 import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBuilder.service';
+import { RedisModule } from 'src/services/Redis/redis.module';
 
 @Module({
   imports: [
@@ -14,9 +15,10 @@ import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBui
         schema: UserSchema,
       },
     ]),
+    RedisModule,
   ],
   controllers: [UserController],
   providers: [UsersService, BcryptService, ResponseBuilderService],
-  exports: [UsersService, BcryptService, ResponseBuilderService],
+  exports: [UsersService],
 })
 export class UserModule {}
