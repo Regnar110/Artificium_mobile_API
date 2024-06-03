@@ -7,10 +7,9 @@ export interface DTOPayloadType<T> {
 
 export type StandardResponseType<PayloadT> = {
   status: HttpStatus;
-  message: string | null;
+  message?: string | null;
   payload?: DTOPayloadType<PayloadT> | DTOPayloadType<null>;
 };
-
 
 export class ResponseModelDto<PayloadT> {
   readonly status: number;

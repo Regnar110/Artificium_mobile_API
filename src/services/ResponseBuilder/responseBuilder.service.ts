@@ -17,4 +17,10 @@ export class ResponseBuilderService {
       payload,
     });
   }
+
+  throwInternalError(constructorName: string, methodName: string) {
+    throw new Error(
+      `catched with class ${constructorName} on method ${methodName}`,
+    );
+  }
 }

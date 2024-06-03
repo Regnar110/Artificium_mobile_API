@@ -10,8 +10,6 @@ export class BcryptService {
   }
 
   async compare(providedPassword: string, databaseHashPassword: string) {
-    console.log(providedPassword)
-    console.log(databaseHashPassword)
     return await bcrypt.compare(providedPassword, databaseHashPassword);
   }
 }

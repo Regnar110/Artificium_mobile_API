@@ -10,6 +10,8 @@ type ServerResponseCustomType = {
  * @customAPI
  * @requires ResponseBuilderService
  * @requires Response
+ * @important - Only to use with controller top level methods. In order to catch erros from inside of nested controller method just use 
+ * ResponseBuilderService with throwInternalError method.
  * @returns modified original method - enchanced by wrapping its content with try catch block and error handling based on nest
  * HTTPS exceptions and response builder service.
  */
@@ -40,13 +42,17 @@ export function TryCatch() {
             `${this.constructor.name} on ${originalMethod.name} with @TryCatch decorator - Could not find ResponseServiceBuilder attached to class constructor!`,
           );
         }
-        serverResponse.json(
-          responseService.buildStandardResponse({
-            status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-            message: `catched with class ${this.constructor.name} on method ${originalMethod.name}`,
-            payload: null,
-          }),
-        );
+        const responseObject = responseService.buildStandardResponse({
+          status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          message:
+            `${error.message} --- inside ${this.constructor.name} on controller method ${originalMethod.name}` ||
+            `catched with class ${this.constructor.name} on method ${originalMethod.name}`,
+          payload: null,
+        });
+
+        if (serverResponse) {
+          serverResponse.json(responseObject);
+        }
       }
     };
 

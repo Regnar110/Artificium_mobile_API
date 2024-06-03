@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 import { redisConfig } from './config';
+import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class RedisService {
   private readonly RedisInstance: Redis;
   constructor() {
-    console.log(redisConfig())
     this.RedisInstance = new Redis(redisConfig());
   }
 
   getInstance() {
     return this.RedisInstance;
+  }
+
+  async setAccessToken(key: ObjectId, value: string) {
+    this.RedisInstance.set(key.toString(), value, 'EX', 21600);
   }
 }

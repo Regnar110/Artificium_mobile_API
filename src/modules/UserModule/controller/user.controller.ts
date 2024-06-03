@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from 'src/modules/UserModule/user.service';
 import UserRepo from '../utils/user.util';
@@ -13,19 +20,23 @@ import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBui
 import { TryCatch } from '../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
+import { AuthenticationService } from 'src/services/Authentication/authentication.service';
+import { RedisService } from 'src/services/Redis/redis.service';
 
 @Controller('user')
 export class UserController {
   constructor(
     private readonly usersService: UsersService,
+    private readonly redisService: RedisService,
     private readonly bcryptService: BcryptService,
     private readonly responseBuilder: ResponseBuilderService,
+    private readonly authenticationService: AuthenticationService,
   ) {}
 
   @Post('signin')
   @HttpCode(200)
   @TryCatch()
-  async login(@Body() body: SignInPayload) {
+  async login(@Body() body: SignInPayload, @Res() res: Response) {
     if (!body) throw new Error();
 
     const extractedFieldValues =
@@ -44,12 +55,33 @@ export class UserController {
       recievedUser.password,
     );
 
+    delete recievedUser.password;
+
     if (!isPasswordMatch) {
-      this.responseBuilder.buildStandardResponse(
+      const response = this.responseBuilder.buildStandardResponse(
         UserResponses.signinForm.unauthorized,
       );
+      return res.status(response.status).json(response);
     }
+    recievedUser.password = undefined;
+    const { access_token } =
+      await this.authenticationService.generateJWT(recievedUser);
+    const x = await this.redisService.setAccessToken(
+      recievedUser._id,
+      access_token,
+    );
 
+    const controllerEndResponse = this.responseBuilder.buildStandardResponse({
+      status: HttpStatus.OK,
+      payload: {
+        redirect: 'dashboard',
+        data: {
+          jwt: access_token,
+        },
+      },
+    });
+
+    res.status(controllerEndResponse.status).json(controllerEndResponse);
     /**
      * @TODO JWT TOKEN RETURN FROM THIS POINT.
      */

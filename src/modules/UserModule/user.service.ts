@@ -20,13 +20,10 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async getUser({
-    email,
-    password,
-  }: ProcessedSignInCredentials): Promise<User> {
+  async getUser({ email }: ProcessedSignInCredentials): Promise<User> {
     const query = this.userModel
       .findOne({ email })
-      .select({ _id: 0, email: 1, firstname: 1, lastname: 1, password: 1 });
+      .select({ _id: 1, email: 1, firstname: 1, lastname: 1, password: 1 });
     return query.exec();
   }
 

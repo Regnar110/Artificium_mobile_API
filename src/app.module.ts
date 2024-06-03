@@ -5,11 +5,16 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './modules/UserModule/user.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_KEY,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI, { dbName: 'Artificium' }),
     UserModule,

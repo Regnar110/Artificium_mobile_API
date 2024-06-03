@@ -1,9 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AgreementSchema } from './agreements.schema';
 import { AgreementContentInterface } from './schema.model';
+import mongoose, { ObjectId } from 'mongoose';
 
 @Schema({ versionKey: false })
 export class User {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id: ObjectId;
+
   @Prop()
   email: string;
 
