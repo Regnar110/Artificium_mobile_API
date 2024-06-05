@@ -48,6 +48,7 @@ export const UserResponses = {
       payload: {
         redirect: null,
         data: {
+          formError: true,
           formId: 'signinForm',
           clientMessage: 'Provided wrong credentials.',
         },

@@ -43,11 +43,11 @@ export class UserController {
       UserRepo.extractFieldValue<ProcessedSignInCredentials>(body);
 
     const recievedUser = await this.usersService.getUser(extractedFieldValues);
-
     if (!recievedUser) {
-      this.responseBuilder.buildStandardResponse(
+      const response = this.responseBuilder.buildStandardResponse(
         UserResponses.signinForm.unauthorized,
       );
+      return res.status(response.status).json(response);
     }
 
     const isPasswordMatch = await this.bcryptService.compare(
@@ -66,10 +66,7 @@ export class UserController {
     recievedUser.password = undefined;
     const { access_token } =
       await this.authenticationService.generateJWT(recievedUser);
-    const x = await this.redisService.setAccessToken(
-      recievedUser._id,
-      access_token,
-    );
+    await this.redisService.setAccessToken(recievedUser._id, access_token);
 
     const controllerEndResponse = this.responseBuilder.buildStandardResponse({
       status: HttpStatus.OK,
@@ -82,9 +79,6 @@ export class UserController {
     });
 
     res.status(controllerEndResponse.status).json(controllerEndResponse);
-    /**
-     * @TODO JWT TOKEN RETURN FROM THIS POINT.
-     */
   }
 
   @Post('register')
@@ -107,6 +101,8 @@ export class UserController {
     body.fields.password.value = await this.bcryptService.hashString(
       body.fields.password.value,
     );
+
+    delete body.fields.repeatpassword;
 
     const createdUser = await this.usersService.createUser(
       UserRepo.extractFieldValue<User>(body),
