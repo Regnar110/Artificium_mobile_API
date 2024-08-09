@@ -51,6 +51,20 @@ export const UserResponses = {
           formError: true,
           formId: 'signinForm',
           clientMessage: 'Provided wrong credentials.',
+          jwt: null,
+        },
+      },
+    },
+    authorized: {
+      status: HttpStatus.OK,
+      message: 'OK',
+      payload: {
+        redirect: 'dashboard',
+        data: {
+          formError: false,
+          formId: 'signinForm',
+          clientMessage: null,
+          jwt: null,
         },
       },
     },

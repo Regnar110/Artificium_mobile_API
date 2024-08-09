@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from 'src/modules/UserModule/user.service';
 import UserRepo from '../utils/user.util';
@@ -64,19 +57,14 @@ export class UserController {
       return res.status(response.status).json(response);
     }
     recievedUser.password = undefined;
-    const { access_token } =
+    const access_token =
       await this.authenticationService.generateJWT(recievedUser);
     await this.redisService.setAccessToken(recievedUser._id, access_token);
 
-    const controllerEndResponse = this.responseBuilder.buildStandardResponse({
-      status: HttpStatus.OK,
-      payload: {
-        redirect: 'dashboard',
-        data: {
-          jwt: access_token,
-        },
-      },
-    });
+    const jwtResponse = UserResponses.signinForm.authorized;
+    jwtResponse.payload.data.jwt = access_token;
+
+    const controllerEndResponse = this.responseBuilder.buildStandardResponse(jwtResponse);
 
     res.status(controllerEndResponse.status).json(controllerEndResponse);
   }
@@ -107,7 +95,6 @@ export class UserController {
     const createdUser = await this.usersService.createUser(
       UserRepo.extractFieldValue<User>(body),
     );
-
     if ('email' in createdUser) {
       const response = this.responseBuilder.buildStandardResponse<{
         clientMessage: string;

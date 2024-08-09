@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# App Private key for jwt verification
+/privateKey.pem
+
 # Logs
 logs
 *.log
