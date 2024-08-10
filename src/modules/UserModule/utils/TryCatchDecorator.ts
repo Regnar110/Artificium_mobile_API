@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBuilder.service';
+import { ResponseBuilderService } from 'src/domain/services/ResponseBuilder/responseBuilder.service';
 
 type ServerResponseCustomType = {
   status: (status: number) => void;

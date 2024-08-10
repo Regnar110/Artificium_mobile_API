@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { REDIRECT } from 'src/services/ResponseBuilder/redirectors.constant';
+import { REDIRECT } from 'src/domain/services/ResponseBuilder/redirectors.constant';
 
 export const UserResponses = {
   registerForm: {

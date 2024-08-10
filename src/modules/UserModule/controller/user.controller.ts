@@ -1,20 +1,30 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Res,
+  Headers,
+  Req,
+  Get,
+} from '@nestjs/common';
 import { Response } from 'express';
-import { UsersService } from 'src/modules/UserModule/user.service';
 import UserRepo from '../utils/user.util';
 import { User } from 'src/MongoDB/Schemas/user/user.schema';
+import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
+import { BcryptService } from 'src/domain/services/bcrypt/bcrypt.service';
+import { RedisService } from 'src/domain/services/Redis/redis.service';
+import { ResponseBuilderService } from 'src/domain/services/ResponseBuilder/responseBuilder.service';
 import {
   SignInPayload,
   ProcessedSignInCredentials,
   RegisterPayload,
 } from '../user.model';
-import { BcryptService } from 'src/services/bcrypt/bcrypt.service';
-import { ResponseBuilderService } from 'src/services/ResponseBuilder/responseBuilder.service';
+import { UsersService } from '../user.service';
 import { TryCatch } from '../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
-import { AuthenticationService } from 'src/services/Authentication/authentication.service';
-import { RedisService } from 'src/services/Redis/redis.service';
+import { AuthBearer } from 'src/domain/decorators/AuthBearer.decorator';
 
 @Controller('user')
 export class UserController {
@@ -29,7 +39,12 @@ export class UserController {
   @Post('signin')
   @HttpCode(200)
   @TryCatch()
-  async login(@Body() body: SignInPayload, @Res() res: Response) {
+  async login(
+    @Body() body: SignInPayload,
+    @Res() res: Response,
+    @Headers() headers: Headers,
+  ) {
+    console.log(headers);
     if (!body) throw new Error();
 
     const extractedFieldValues =
@@ -64,7 +79,8 @@ export class UserController {
     const jwtResponse = UserResponses.signinForm.authorized;
     jwtResponse.payload.data.jwt = access_token;
 
-    const controllerEndResponse = this.responseBuilder.buildStandardResponse(jwtResponse);
+    const controllerEndResponse =
+      this.responseBuilder.buildStandardResponse(jwtResponse);
 
     res.status(controllerEndResponse.status).json(controllerEndResponse);
   }
@@ -106,5 +122,11 @@ export class UserController {
       }>(UserResponses.registerForm.userNotCreated);
       return res.status(response.status).json(response);
     }
+  }
+
+  @Get('logout')
+  @HttpCode(205)
+  @AuthBearer()
+  async logout(@Req() req: Request, @Headers() headers: Headers) {
   }
 }

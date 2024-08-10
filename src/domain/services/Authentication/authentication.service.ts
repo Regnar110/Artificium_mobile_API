@@ -33,7 +33,6 @@ export class AuthenticationService {
     const access_token = await this.jwtService.signAsync(
       JSON.stringify(userPayload),
       {
-        
         privateKey: secretKey.toString(),
       },
     );
