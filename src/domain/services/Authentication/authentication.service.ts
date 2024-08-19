@@ -33,13 +33,21 @@ export class AuthenticationService {
     const access_token = await this.jwtService.signAsync(
       JSON.stringify(userPayload),
       {
+        // publicKey: secretKey.toString(),
         privateKey: secretKey.toString(),
+        secret: secretKey.toString(),
       },
     );
 
     return access_token;
   }
 
+  async verifyJWT(jwt: string) {
+    const secretKey = this.getJwtPrivateKey();
+    return this.jwtService.verify(jwt, {
+      secret: secretKey.toString(),
+    });
+  }
   async decodeJWT(jwt: string) {
     return this.jwtService.decode(jwt);
   }

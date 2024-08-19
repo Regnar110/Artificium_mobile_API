@@ -40,7 +40,6 @@ export const UserResponses = {
       },
     },
   },
-
   signinForm: {
     unauthorized: {
       status: HttpStatus.UNAUTHORIZED,
@@ -55,6 +54,7 @@ export const UserResponses = {
         },
       },
     },
+
     authorized: {
       status: HttpStatus.OK,
       message: 'OK',
@@ -67,6 +67,14 @@ export const UserResponses = {
           jwt: null,
         },
       },
+    },
+  },
+  unauthorized: {
+    status: HttpStatus.UNAUTHORIZED,
+    message: 'UNAUTHORIZED',
+    payload: {
+      redirect: null,
+      data: null,
     },
   },
 };

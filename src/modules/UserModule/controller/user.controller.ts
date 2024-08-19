@@ -24,7 +24,7 @@ import { UsersService } from '../user.service';
 import { TryCatch } from '../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
-import { AuthBearer } from 'src/domain/decorators/AuthBearer.decorator';
+import { Auth } from 'src/domain/services/Authentication/decorators/AuthBearer.decorator';
 
 @Controller('user')
 export class UserController {
@@ -39,12 +39,7 @@ export class UserController {
   @Post('signin')
   @HttpCode(200)
   @TryCatch()
-  async login(
-    @Body() body: SignInPayload,
-    @Res() res: Response,
-    @Headers() headers: Headers,
-  ) {
-    console.log(headers);
+  async login(@Body() body: SignInPayload, @Res() res: Response) {
     if (!body) throw new Error();
 
     const extractedFieldValues =
@@ -126,7 +121,21 @@ export class UserController {
 
   @Get('logout')
   @HttpCode(205)
-  @AuthBearer()
-  async logout(@Req() req: Request, @Headers() headers: Headers) {
+  async logout(
+    @Auth() auth: unknown,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Headers() headers: Headers,
+  ) {
+    console.log('auth TOOOOO')
+    console.log(auth)
+    if (!auth) {
+      const response = this.responseBuilder.buildStandardResponse(
+        UserResponses.unauthorized,
+      );
+
+      return res.status(response.status)
+    }
+
   }
 }
