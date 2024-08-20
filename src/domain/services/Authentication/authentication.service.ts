@@ -30,22 +30,18 @@ export class AuthenticationService {
         this.generateJWT.name,
       );
     }
-    const access_token = await this.jwtService.signAsync(
-      JSON.stringify(userPayload),
-      {
-        // publicKey: secretKey.toString(),
-        privateKey: secretKey.toString(),
-        secret: secretKey.toString(),
-      },
-    );
+    console.log(userPayload)
+    const access_token = await this.jwtService.sign({ ...userPayload });
 
     return access_token;
   }
 
   async verifyJWT(jwt: string) {
     const secretKey = this.getJwtPrivateKey();
-    return this.jwtService.verify(jwt, {
-      secret: secretKey.toString(),
+    console.log(secretKey)
+    return this.jwtService.verifyAsync(jwt, {
+      secret: process.env.JWT_SECRET,
+      algorithms: ['RS256'],
     });
   }
   async decodeJWT(jwt: string) {

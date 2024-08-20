@@ -7,6 +7,8 @@ import { BcryptService } from 'src/domain/services/bcrypt/bcrypt.service';
 import { ResponseBuilderService } from 'src/domain/services/ResponseBuilder/responseBuilder.service';
 import { RedisModule } from 'src/domain/services/Redis/redis.module';
 import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
+import { JwtModule } from '@nestjs/jwt';
+import * as fs from 'fs';
 
 @Module({
   imports: [
@@ -17,6 +19,12 @@ import { AuthenticationService } from 'src/domain/services/Authentication/authen
       },
     ]),
     RedisModule,
+    JwtModule.register({
+      signOptions: { algorithm: 'RS256' },
+      secret: process.env.JWT_SECRET,
+      privateKey: fs.readFileSync('privateKey.pem')?.toString(),
+      publicKey: fs.readFileSync('publicKey.pem')?.toString(),
+    }),
   ],
   controllers: [UserController],
   providers: [
