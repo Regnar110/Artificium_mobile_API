@@ -9,7 +9,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import UserRepo from '../utils/user.util';
+import UserRepo from '../../utils/user.util';
 import { User } from 'src/MongoDB/Schemas/user/user.schema';
 import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
 import { BcryptService } from 'src/domain/services/bcrypt/bcrypt.service';
@@ -19,17 +19,17 @@ import {
   SignInPayload,
   ProcessedSignInCredentials,
   RegisterPayload,
-} from '../user.model';
-import { UsersService } from '../user.service';
-import { TryCatch } from '../utils/TryCatchDecorator';
+} from '../../models/user.model';
+import { UsersService } from '../../services/user.service';
+import { TryCatch } from '../../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
 import { Auth } from 'src/domain/services/Authentication/decorators/AuthBearer.decorator';
 import { AppSession } from 'src/domain/services/Authentication/auth.model';
 import { RedisResponses } from 'src/domain/services/Redis/responses';
 
-@Controller('user')
-export class UserController {
+@Controller('authentication')
+export class AuthenticationController {
   constructor(
     private readonly usersService: UsersService,
     private readonly redisService: RedisService,

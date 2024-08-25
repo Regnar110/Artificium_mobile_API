@@ -1,9 +1,9 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto } from './createUserDto';
+import { CreateUserDto } from '../controller/authentication/createUserDto';
 import { User } from 'src/MongoDB/Schemas/user/user.schema';
-import { ProcessedSignInCredentials } from './user.model';
+import { ProcessedSignInCredentials } from '../models/user.model';
 
 /**
  * @injectable - means that this class knows, that it can be injected to other classes which needs functionality from this class.

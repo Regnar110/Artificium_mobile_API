@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersService } from './user.service';
-import { UserController } from './controller/user.controller';
+import { UsersService } from '../services/user.service';
+import { AuthenticationController } from '../controller/authentication/authentication.controller';
 import { User, UserSchema } from 'src/MongoDB/Schemas/user/user.schema';
 import { BcryptService } from 'src/domain/services/bcrypt/bcrypt.service';
 import { ResponseBuilderService } from 'src/domain/services/ResponseBuilder/responseBuilder.service';
@@ -25,7 +25,7 @@ import * as fs from 'fs';
       publicKey: fs.readFileSync('publicKey.pem')?.toString(),
     }),
   ],
-  controllers: [UserController],
+  controllers: [AuthenticationController],
   providers: [
     UsersService,
     BcryptService,

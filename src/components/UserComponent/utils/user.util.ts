@@ -1,4 +1,4 @@
-import { RegisterPayload, SignInPayload } from '../user.model';
+import { RegisterPayload, SignInPayload } from '../models/user.model';
 
 type ExtractFieldValueDataType = SignInPayload | RegisterPayload;
 

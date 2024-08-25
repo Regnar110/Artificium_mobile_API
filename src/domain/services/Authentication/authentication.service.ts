@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseBuilderService } from '../ResponseBuilder/responseBuilder.service';
-import { ProcessedUser } from 'src/modules/UserModule/user.model';
+import { ProcessedUser } from 'src/components/UserComponent/models/user.model';
 import * as fs from 'fs';
-import { TryCatch } from 'src/modules/UserModule/utils/TryCatchDecorator';
+import { TryCatch } from 'src/components/UserComponent/utils/TryCatchDecorator';
 
 @Injectable()
 export class AuthenticationService {
