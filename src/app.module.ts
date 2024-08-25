@@ -14,7 +14,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_KEY,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI, { dbName: 'Artificium' }),
     UserModule,

@@ -7,6 +7,7 @@ import {
   Headers,
   Req,
   Get,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import UserRepo from '../utils/user.util';
@@ -25,6 +26,9 @@ import { TryCatch } from '../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
 import { Auth } from 'src/domain/services/Authentication/decorators/AuthBearer.decorator';
+import { Session } from 'inspector';
+import { AppSession } from 'src/domain/services/Authentication/auth.model';
+import { RedisResponses } from 'src/domain/services/Redis/responses';
 
 @Controller('user')
 export class UserController {
@@ -122,20 +126,31 @@ export class UserController {
   @Get('logout')
   @HttpCode(205)
   async logout(
-    @Auth() auth: unknown,
+    @Auth() auth: AppSession,
     @Req() req: Request,
     @Res() res: Response,
-    @Headers() headers: Headers,
   ) {
-    console.log('auth TOOOOO')
-    console.log(auth)
     if (!auth) {
       const response = this.responseBuilder.buildStandardResponse(
         UserResponses.unauthorized,
       );
-
-      return res.status(response.status)
+      return res.status(response.status).json(response);
     }
 
+    const redisSessionRemoveResult: number =
+      await this.redisService.removeAccessToken(auth._id);
+
+    if (!redisSessionRemoveResult || redisSessionRemoveResult < 1) {
+      const response = this.responseBuilder.buildStandardResponse(
+        RedisResponses.sessionNotDeleted,
+      );
+
+      return res.status(response.status).json(response);
+    }
+
+    const successResponse = this.responseBuilder.buildStandardResponse(
+      UserResponses.logout,
+    );
+    return res.status(successResponse.status).json(successResponse);
   }
 }

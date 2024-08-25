@@ -1,4 +1,4 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { ResponseBuilderService } from 'src/domain/services/ResponseBuilder/responseBuilder.service';
 
 type ServerResponseCustomType = {
@@ -10,13 +10,19 @@ type ServerResponseCustomType = {
  * @customAPI
  * @requires ResponseBuilderService
  * @requires Response
- * @important - Only to use with controller top level methods. In order to catch erros from inside of nested controller method just use 
+ * @important - Only to use with controller top level methods. In order to catch erros from inside of nested controller method just use
  * ResponseBuilderService with throwInternalError method.
  * @returns modified original method - enchanced by wrapping its content with try catch block and error handling based on nest
  * HTTPS exceptions and response builder service.
  */
 
-export function TryCatch() {
+interface ErrorConstructor extends HttpException {
+  new (message?: string): Error;
+  (message?: string): Error;
+  readonly prototype: Error;
+}
+
+export function TryCatch(errorConstructor?: typeof HttpException) {
   return function (
     _target: any,
     _propertyKey: string,
@@ -32,6 +38,14 @@ export function TryCatch() {
           (arg) => arg.constructor.name === 'ServerResponse',
         );
         if (!serverResponse) {
+          if (errorConstructor) {
+            throw new HttpException(
+              `${error.message} --- inside ${this.constructor.name} on controller method ${originalMethod.name}` ||
+                `catched with class ${this.constructor.name} on method ${originalMethod.name}`,
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+
           throw new Error(
             `${this.constructor.name} on ${originalMethod.name} with @TryCatch decorator - Could not find ServerResponse!`,
           );

@@ -10,21 +10,16 @@ export const Auth = createParamDecorator(
     const jwtService = new JwtService();
     const redisService = new RedisService();
     const responseService = new ResponseBuilderService();
-    const authServiceComposition = new AuthenticationService(
-      jwtService,
-      responseService,
-    );
+    const authService = new AuthenticationService(jwtService, responseService);
     const token = request.headers.authorization?.split(' ')[1];
-
-    const decodedJWTData = await authServiceComposition.verifyJWT(token);
-    console.log(decodedJWTData)
+    const decodedJWTData = await authService.verifyJWT(token);
     if (decodedJWTData) {
       const tokenCheckResult = await redisService.checkTokenPresence(
-        decodedJWTData._id,
+        decodedJWTData._doc._id,
       );
 
       if (tokenCheckResult) {
-        return decodedJWTData;
+        return decodedJWTData._doc;
       }
       return null;
     }

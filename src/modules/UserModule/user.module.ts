@@ -21,7 +21,6 @@ import * as fs from 'fs';
     RedisModule,
     JwtModule.register({
       signOptions: { algorithm: 'RS256' },
-      secret: process.env.JWT_SECRET,
       privateKey: fs.readFileSync('privateKey.pem')?.toString(),
       publicKey: fs.readFileSync('publicKey.pem')?.toString(),
     }),

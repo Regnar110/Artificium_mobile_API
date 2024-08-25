@@ -59,7 +59,7 @@ export const UserResponses = {
       status: HttpStatus.OK,
       message: 'OK',
       payload: {
-        redirect: 'dashboard',
+        redirect: REDIRECT.DASHBOARD,
         data: {
           formError: false,
           formId: 'signinForm',
@@ -74,6 +74,15 @@ export const UserResponses = {
     message: 'UNAUTHORIZED',
     payload: {
       redirect: null,
+      data: null,
+    },
+  },
+
+  logout: {
+    status: HttpStatus.OK,
+    message: 'See you soon!',
+    payload: {
+      redirect: REDIRECT.SIGN_IN,
       data: null,
     },
   },

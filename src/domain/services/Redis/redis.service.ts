@@ -15,7 +15,11 @@ export class RedisService {
   }
 
   async setAccessToken(key: ObjectId, value: string) {
-    this.RedisInstance.set(key.toString(), value, 'EX', 21600);
+    await this.RedisInstance.set(key.toString(), value, 'EX', 21600);
+  }
+
+  async removeAccessToken(key: ObjectId) {
+    return await this.RedisInstance.del(key.toString());
   }
 
   async checkTokenPresence(key: ObjectId) {
