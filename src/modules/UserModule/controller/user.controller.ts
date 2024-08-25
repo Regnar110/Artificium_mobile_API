@@ -4,10 +4,9 @@ import {
   HttpCode,
   Post,
   Res,
-  Headers,
   Req,
   Get,
-  UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
 import UserRepo from '../utils/user.util';
@@ -26,7 +25,6 @@ import { TryCatch } from '../utils/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
 import { Auth } from 'src/domain/services/Authentication/decorators/AuthBearer.decorator';
-import { Session } from 'inspector';
 import { AppSession } from 'src/domain/services/Authentication/auth.model';
 import { RedisResponses } from 'src/domain/services/Redis/responses';
 
@@ -43,7 +41,18 @@ export class UserController {
   @Post('signin')
   @HttpCode(200)
   @TryCatch()
-  async login(@Body() body: SignInPayload, @Res() res: Response) {
+  async login(
+    @Auth() auth: AppSession,
+    @Body() body: SignInPayload,
+    @Res() res: Response,
+  ) {
+    if (auth) {
+      const response = this.responseBuilder.buildStandardResponse(
+        UserResponses.unauthorized,
+      );
+      return res.status(response.status).json(response);
+    }
+
     if (!body) throw new Error();
 
     const extractedFieldValues =
@@ -87,7 +96,18 @@ export class UserController {
   @Post('register')
   @HttpCode(201)
   @TryCatch()
-  async register(@Body() body: RegisterPayload, @Res() res: Response) {
+  async register(
+    @Auth() auth: AppSession,
+    @Body() body: RegisterPayload,
+    @Res() res: Response,
+  ) {
+    if (auth) {
+      const response = this.responseBuilder.buildStandardResponse(
+        UserResponses.unauthorized,
+      );
+      return res.status(response.status).json(response);
+    }
+
     const userWithEmailExist = await this.usersService.findUserWithEmail({
       email: body.fields.email.value,
     });
@@ -124,7 +144,7 @@ export class UserController {
   }
 
   @Get('logout')
-  @HttpCode(205)
+  @HttpCode(HttpStatus.OK)
   async logout(
     @Auth() auth: AppSession,
     @Req() req: Request,
@@ -136,7 +156,6 @@ export class UserController {
       );
       return res.status(response.status).json(response);
     }
-
     const redisSessionRemoveResult: number =
       await this.redisService.removeAccessToken(auth._id);
 
