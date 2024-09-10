@@ -9,9 +9,13 @@ import { RedisModule } from 'src/domain/services/Redis/redis.module';
 import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as fs from 'fs';
+import { FriendListModule } from './friendList.module';;
+import { FriendListService } from '../services/friendList.service';
+import { SocketModule } from 'src/components/SocketComponent/socket.module';
 
 @Module({
   imports: [
+    SocketModule,
     MongooseModule.forFeature([
       {
         name: User.name,
@@ -19,6 +23,7 @@ import * as fs from 'fs';
       },
     ]),
     RedisModule,
+    FriendListModule,
     JwtModule.register({
       signOptions: { algorithm: 'RS256' },
       privateKey: fs.readFileSync('privateKey.pem')?.toString(),
@@ -31,6 +36,7 @@ import * as fs from 'fs';
     BcryptService,
     ResponseBuilderService,
     AuthenticationService,
+    FriendListService,
   ],
   exports: [UsersService],
 })

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AgreementSchema } from './agreements.schema';
 import { AgreementContentInterface } from './schema.model';
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 @Schema({ versionKey: false })
 export class User {
@@ -21,6 +21,9 @@ export class User {
 
   @Prop({ type: [AgreementSchema] })
   agreementFields: AgreementContentInterface[];
+
+  @Prop()
+  friendList: Array<string>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

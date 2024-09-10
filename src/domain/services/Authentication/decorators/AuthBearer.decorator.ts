@@ -13,13 +13,14 @@ export const Auth = createParamDecorator(
     const authService = new AuthenticationService(jwtService, responseService);
     const token = request.headers.authorization?.split(' ')[1];
     const decodedJWTData = await authService.verifyJWT(token);
+
     if (decodedJWTData) {
       const tokenCheckResult = await redisService.checkTokenPresence(
-        decodedJWTData._doc._id,
+        decodedJWTData._id,
       );
 
       if (tokenCheckResult) {
-        return decodedJWTData._doc;
+        return decodedJWTData;
       }
       return null;
     }

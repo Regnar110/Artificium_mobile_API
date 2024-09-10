@@ -14,15 +14,15 @@ export class RedisService {
     return this.RedisInstance;
   }
 
-  async setAccessToken(key: ObjectId, value: string) {
+  async setKeyValuePair(key: ObjectId | string, value: string) {
     await this.RedisInstance.set(key.toString(), value, 'EX', 21600);
   }
 
-  async removeAccessToken(key: ObjectId) {
+  async removeKeyValuePair(key: ObjectId | string) {
     return await this.RedisInstance.del(key.toString());
   }
 
-  async checkTokenPresence(key: ObjectId) {
+  async checkTokenPresence(key: ObjectId | string): Promise<string | null> {
     return await this.RedisInstance.get(key.toString());
   }
 }

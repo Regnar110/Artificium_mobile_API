@@ -54,7 +54,6 @@ export class AuthenticationController {
     }
 
     if (!body) throw new Error();
-
     const extractedFieldValues =
       UserRepo.extractFieldValue<ProcessedSignInCredentials>(body);
 
@@ -82,7 +81,7 @@ export class AuthenticationController {
     recievedUser.password = undefined;
     const access_token =
       await this.authenticationService.generateJWT(recievedUser);
-    await this.redisService.setAccessToken(recievedUser._id, access_token);
+    await this.redisService.setKeyValuePair(recievedUser._id, access_token);
 
     const jwtResponse = UserResponses.signinForm.authorized;
     jwtResponse.payload.data.jwt = access_token;
@@ -157,7 +156,7 @@ export class AuthenticationController {
       return res.status(response.status).json(response);
     }
     const redisSessionRemoveResult: number =
-      await this.redisService.removeAccessToken(auth._id);
+      await this.redisService.removeKeyValuePair(auth._id);
 
     if (!redisSessionRemoveResult || redisSessionRemoveResult < 1) {
       const response = this.responseBuilder.buildStandardResponse(

@@ -6,4 +6,5 @@ export class CreateUserDto {
   readonly lastname: string;
   readonly password: string;
   readonly agreementFields: AgreementContentInterface[];
+  readonly friendList: Array<string>;
 }

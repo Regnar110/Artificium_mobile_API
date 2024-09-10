@@ -1,9 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseBuilderService } from '../ResponseBuilder/responseBuilder.service';
 import { ProcessedUser } from 'src/components/UserComponent/models/user.model';
 import * as fs from 'fs';
-import { TryCatch } from 'src/components/UserComponent/utils/TryCatchDecorator';
 
 @Injectable()
 export class AuthenticationService {
@@ -36,19 +35,18 @@ export class AuthenticationService {
         this.generateJWT.name,
       );
     }
-    console.log(userPayload);
     const access_token = await this.jwtService.sign({ ...userPayload });
 
     return access_token;
   }
 
-  verifyJWT(jwt: string) {
+  verifyJWT(jwt: string): ProcessedUser | null {
     const publicKey = this.getJwtPublicKey();
     try {
       return this.jwtService.verify(jwt, {
         secret: publicKey.toString(),
         algorithms: ['RS256'],
-      });
+      })._doc;
     } catch (e) {
       return null;
     }
