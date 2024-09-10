@@ -6,29 +6,34 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
 import { RedisService } from 'src/domain/services/Redis/redis.service';
+import { FriendListSocketEvents } from '../FriendListSocketComponent/friendListSocketEvents.service';
+import { FRIEND_LIST_ON_EVENTS } from '../FriendListSocketComponent/constants';
 type GatewayDefaultInterface = OnGatewayConnection & OnGatewayDisconnect;
 
 @WebSocketGateway({
-  namespace: 'entry',
+  namespace: 'friendList',
   cors: {
     origin: '*',
   },
 })
-export class SocketGateway implements GatewayDefaultInterface {
+export class SocketFriendListGateway implements GatewayDefaultInterface {
   constructor(
     private readonly redisService: RedisService,
     private readonly authenticationService: AuthenticationService,
+    private readonly friendListSocketEvents: FriendListSocketEvents,
   ) {}
   async handleDisconnect(client: any) {
+    console.log('FRIEND LIST NAMESPACE DISCONNECTED')
     try {
       const userToken = client.handshake.headers.authorization.split(' ')[1];
 
       const verifiedJWTPayload = this.authenticationService.verifyJWT(userToken);
-      const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_socket`;
+      const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_friendListSocket`;
       await this.redisService.removeKeyValuePair(socketIdConcatWithUserId);
     } catch {
       throw new UnauthorizedException();
@@ -36,6 +41,7 @@ export class SocketGateway implements GatewayDefaultInterface {
   }
 
   async handleConnection(client: any) {
+    console.log('FRIEND LIST NAMESPACE CONNECTED')
     try {
       const userToken = client.handshake.headers.authorization.split(' ')[1];
 
@@ -50,7 +56,7 @@ export class SocketGateway implements GatewayDefaultInterface {
         // Token is invalid
         throw new UnauthorizedException();
       }
-      const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_socket`;
+      const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_friendListSocket`;
 
       const isUserSessionPresentInRedis =
         await this.redisService.checkTokenPresence(verifiedJWTPayload._id);
@@ -71,9 +77,37 @@ export class SocketGateway implements GatewayDefaultInterface {
   @WebSocketServer()
   private server: Socket;
 
-  @SubscribeMessage('hello')
-  handleEvent(@MessageBody() data: any) {
-    console.log('x')
+  @SubscribeMessage(FRIEND_LIST_ON_EVENTS.INVITE)
+  async getFriendListInvitation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
+    client.emit(
+      FRIEND_LIST_ON_EVENTS.INVITE,
+      await this.friendListSocketEvents.getInvitation(),
+    );
+  }
+
+  @SubscribeMessage(FRIEND_LIST_ON_EVENTS.ACCEPT_INVITATION)
+  async acceptFriendListInvitation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
+    client.emit(
+      FRIEND_LIST_ON_EVENTS.ACCEPT_INVITATION,
+      await this.friendListSocketEvents.getInvitation(),
+    );
+  }
+
+  @SubscribeMessage(FRIEND_LIST_ON_EVENTS.REJECT_INVITATION)
+  async rejectFriendListInvitation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
+    client.emit(
+      FRIEND_LIST_ON_EVENTS.REJECT_INVITATION,
+      await this.friendListSocketEvents.getInvitation(),
+    );
   }
   // Implement other Socket.IO event handlers and message handlers
 }

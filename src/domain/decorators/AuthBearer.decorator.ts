@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AuthenticationService } from '../authentication.service';
+import { AuthenticationService } from '../services/Authentication/authentication.service';
 import { JwtService } from '@nestjs/jwt';
-import { ResponseBuilderService } from '../../ResponseBuilder/responseBuilder.service';
-import { RedisService } from '../../Redis/redis.service';
+import { ResponseBuilderService } from '../services/ResponseBuilder/responseBuilder.service';
+import { RedisService } from '../services/Redis/redis.service';
 
 export const Auth = createParamDecorator(
   async (data: unknown, context: ExecutionContext) => {

@@ -21,10 +21,10 @@ import {
   RegisterPayload,
 } from '../../models/user.model';
 import { UsersService } from '../../services/user.service';
-import { TryCatch } from '../../utils/TryCatchDecorator';
+import { TryCatch } from '../../../../domain/decorators/TryCatchDecorator';
 import { UserResponses } from './responses';
 import { EmailExistResponseData } from './responses.model';
-import { Auth } from 'src/domain/services/Authentication/decorators/AuthBearer.decorator';
+import { Auth } from 'src/domain/decorators/AuthBearer.decorator';
 import { AppSession } from 'src/domain/services/Authentication/auth.model';
 import { RedisResponses } from 'src/domain/services/Redis/responses';
 
