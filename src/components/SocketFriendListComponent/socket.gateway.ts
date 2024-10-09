@@ -11,8 +11,8 @@ import {
 import { Socket } from 'socket.io';
 import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
 import { RedisService } from 'src/domain/services/Redis/redis.service';
-import { FriendListSocketEvents } from '../FriendListSocketComponent/friendListSocketEvents.service';
-import { FRIEND_LIST_ON_EVENTS } from '../FriendListSocketComponent/constants';
+import { FriendListSocketEvents } from './friendListSocketEvents.service';
+import { FRIEND_LIST_ON_EVENTS } from './constants';
 type GatewayDefaultInterface = OnGatewayConnection & OnGatewayDisconnect;
 
 @WebSocketGateway({
@@ -31,7 +31,6 @@ export class SocketFriendListGateway implements GatewayDefaultInterface {
     console.log('FRIEND LIST NAMESPACE DISCONNECTED')
     try {
       const userToken = client.handshake.headers.authorization.split(' ')[1];
-
       const verifiedJWTPayload = this.authenticationService.verifyJWT(userToken);
       const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_friendListSocket`;
       await this.redisService.removeKeyValuePair(socketIdConcatWithUserId);
@@ -41,10 +40,10 @@ export class SocketFriendListGateway implements GatewayDefaultInterface {
   }
 
   async handleConnection(client: any) {
-    console.log('FRIEND LIST NAMESPACE CONNECTED')
+    console.log('HELO DUPA')
+    
     try {
       const userToken = client.handshake.headers.authorization.split(' ')[1];
-
       if (!userToken) {
         // there is no Bearer token
         throw new UnauthorizedException();
@@ -52,6 +51,10 @@ export class SocketFriendListGateway implements GatewayDefaultInterface {
 
       const verifiedJWTPayload =
         this.authenticationService.verifyJWT(userToken);
+      
+        console.log('PLSODA')
+        console.log(verifiedJWTPayload)
+
       if (!verifiedJWTPayload) {
         // Token is invalid
         throw new UnauthorizedException();
@@ -61,6 +64,7 @@ export class SocketFriendListGateway implements GatewayDefaultInterface {
       const isUserSessionPresentInRedis =
         await this.redisService.checkTokenPresence(verifiedJWTPayload._id);
       if (!isUserSessionPresentInRedis) {
+        console.log('NO REDIS SESSIon')
         throw new UnauthorizedException();
       }
 
