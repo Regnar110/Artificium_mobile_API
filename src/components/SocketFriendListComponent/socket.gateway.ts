@@ -9,10 +9,9 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { AuthenticationService } from 'src/domain/services/Authentication/authentication.service';
-import { RedisService } from 'src/domain/services/Redis/redis.service';
 import { FriendListSocketEvents } from './friendListSocketEvents.service';
 import { FRIEND_LIST_ON_EVENTS } from './constants';
+import { SocketService } from 'src/domain/services/SocketService/socket.service';
 type GatewayDefaultInterface = OnGatewayConnection & OnGatewayDisconnect;
 
 @WebSocketGateway({
@@ -23,55 +22,20 @@ type GatewayDefaultInterface = OnGatewayConnection & OnGatewayDisconnect;
 })
 export class SocketFriendListGateway implements GatewayDefaultInterface {
   constructor(
-    private readonly redisService: RedisService,
-    private readonly authenticationService: AuthenticationService,
     private readonly friendListSocketEvents: FriendListSocketEvents,
+    private readonly socketService: SocketService,
   ) {}
   async handleDisconnect(client: any) {
-    console.log('FRIEND LIST NAMESPACE DISCONNECTED')
     try {
-      const userToken = client.handshake.headers.authorization.split(' ')[1];
-      const verifiedJWTPayload = this.authenticationService.verifyJWT(userToken);
-      const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_friendListSocket`;
-      await this.redisService.removeKeyValuePair(socketIdConcatWithUserId);
+      this.socketService.disconnectUser(client, 'friendListSocket');
     } catch {
       throw new UnauthorizedException();
     }
   }
 
   async handleConnection(client: any) {
-    console.log('HELO DUPA')
-    
     try {
-      const userToken = client.handshake.headers.authorization.split(' ')[1];
-      if (!userToken) {
-        // there is no Bearer token
-        throw new UnauthorizedException();
-      }
-
-      const verifiedJWTPayload =
-        this.authenticationService.verifyJWT(userToken);
-      
-        console.log('PLSODA')
-        console.log(verifiedJWTPayload)
-
-      if (!verifiedJWTPayload) {
-        // Token is invalid
-        throw new UnauthorizedException();
-      }
-      const socketIdConcatWithUserId = `${verifiedJWTPayload._id}_friendListSocket`;
-
-      const isUserSessionPresentInRedis =
-        await this.redisService.checkTokenPresence(verifiedJWTPayload._id);
-      if (!isUserSessionPresentInRedis) {
-        console.log('NO REDIS SESSIon')
-        throw new UnauthorizedException();
-      }
-
-      await this.redisService.setKeyValuePair(
-        socketIdConcatWithUserId,
-        client.id,
-      );
+      this.socketService.verifyAndConnect(client);
     } catch {
       // something failed
       throw new UnauthorizedException();
