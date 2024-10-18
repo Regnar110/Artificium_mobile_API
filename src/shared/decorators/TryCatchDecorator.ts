@@ -33,10 +33,12 @@ export function TryCatch(errorConstructor?: typeof HttpException) {
       try {
         return await originalMethod.apply(this, args);
       } catch (error) {
+        console.log(error)
         const responseService: ResponseBuilderService = this.responseBuilder;
-        const serverResponse: ServerResponseCustomType = args.find(
-          (arg) => arg.constructor.name === 'ServerResponse',
-        );
+        const serverResponse: ServerResponseCustomType = args.find((arg) => {
+          console.log(arg)
+          return arg.constructor.name === 'ServerResponse';
+        });
         if (!serverResponse) {
           if (errorConstructor) {
             throw new HttpException(

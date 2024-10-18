@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProcessedUser } from 'src/lgcy/components/UserComponent/models/user.model';
 import * as fs from 'fs';
-import { ResponseBuilderService } from 'src/lgcy/domain/services/ResponseBuilder/responseBuilder.service';
+import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
 
 @Injectable()
 export class AuthService {
@@ -35,8 +35,14 @@ export class AuthService {
         this.generateJWT.name,
       );
     }
-    const access_token = await this.jwtService.sign({ ...userPayload });
 
+    const access_token = this.jwtService.sign(
+      { ...userPayload },
+      {
+        algorithm: 'RS256',
+        privateKey: secretKey,
+      },
+    );
     return access_token;
   }
 

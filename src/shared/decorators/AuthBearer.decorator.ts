@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AuthenticationService } from '../services/Authentication/authentication.service';
 import { JwtService } from '@nestjs/jwt';
+import { AuthenticationService } from 'src/lgcy/domain/services/Authentication/authentication.service';
+import { RedisService } from '../services/redis/redis.service';
 import { ResponseBuilderService } from '../services/ResponseBuilder/responseBuilder.service';
-import { RedisService } from '../../../shared/services/redis/redis.service';
 
 export const Auth = createParamDecorator(
   async (data: unknown, context: ExecutionContext) => {
@@ -18,7 +18,6 @@ export const Auth = createParamDecorator(
       const tokenCheckResult = await redisService.checkTokenPresence(
         decodedJWTData._id,
       );
-
       if (tokenCheckResult) {
         return decodedJWTData;
       }

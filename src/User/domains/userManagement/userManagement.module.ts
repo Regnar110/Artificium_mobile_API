@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
 import { UserManagementController } from './presentation/controllers/userManagement.controller';
-import { CreateUserService } from './services/createUser.service';
+import { UserService } from './services/user.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'src/User/entities/user.entity';
+import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
+import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
+import { RedisService } from 'src/shared/services/redis/redis.service';
 
 @Module({
-  imports: [],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: User.name,
+        schema: UserSchema,
+      },
+    ]),
+  ],
   controllers: [UserManagementController],
-  providers: [CreateUserService],
+  providers: [UserService, ResponseBuilderService, BcryptService, RedisService],
 })
 export class UserManagementModule {}

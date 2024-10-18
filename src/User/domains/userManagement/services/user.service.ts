@@ -1,15 +1,15 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto } from '../controller/authentication/createUserDto';
-import { User } from 'src/MongoDB/Schemas/user/user.schema';
-import { ProcessedSignInCredentials } from '../models/user.model';
+import { ProcessedSignInCredentials } from 'src/lgcy/components/UserComponent/models/user.model';
+import { User } from 'src/User/entities/user.entity';
+import { CreateUserDto } from '../presentation/dto/CreateUserDTO';
 
 /**
  * @injectable - means that this class knows, that it can be injected to other classes which needs functionality from this class.
  */
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,

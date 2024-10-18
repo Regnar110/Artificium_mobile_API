@@ -1,5 +1,5 @@
-import { AuthLoginRequestPayload } from 'src/UserDomain/types/auth.types';
-import { CreateUserRequestPayload } from 'src/UserDomain/types/createUser.types';
+import { AuthLoginRequestPayload } from 'src/User/types/auth.types';
+import { CreateUserRequestPayload } from 'src/User/types/createUser.types';
 
 type ExtractFieldValueDataType =
   | AuthLoginRequestPayload
