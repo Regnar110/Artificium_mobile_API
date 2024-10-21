@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthenticationService } from '../../../lgcy/domain/services/Authentication/authentication.service';
 import { RedisService } from '../redis/redis.service';
+import { AuthService } from 'src/User/domains/auth/services/auth.service';
 
 @Injectable()
 export class SocketService {
   constructor(
     private readonly redisService: RedisService,
-    private readonly authenticationService: AuthenticationService,
+    private readonly authenticationService: AuthService,
   ) {}
 
   async verifyAndConnect(client) {

@@ -1,10 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
-import { Response } from 'express';
-import { UserResponses } from 'src/lgcy/components/UserComponent/controller/authentication/responses';
-import { SignInPayload, ProcessedSignInCredentials } from 'src/lgcy/components/UserComponent/models/user.model';
-import UserRepo from 'src/lgcy/components/UserComponent/utils/user.util';
-import { AppSession } from 'src/lgcy/domain/services/Authentication/auth.model';
-import { Auth } from 'src/shared/decorators/AuthBearer.decorator';
+import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
 import { TryCatch } from 'src/shared/decorators/TryCatchDecorator';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { RedisService } from 'src/shared/services/redis/redis.service';
@@ -12,6 +6,23 @@ import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/resp
 import { UserService } from 'src/User/domains/userManagement/services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { RedisResponses } from 'src/shared/services/redis/responses';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  Body,
+  Res,
+  Get,
+  HttpStatus,
+  Req,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { UserResponses } from 'src/User/common/responses';
+import {
+  AuthLoginCredentials,
+  AuthLoginRequestPayload,
+} from 'src/User/types/auth.types';
+import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 
 @Controller('auth')
 export class AuthController {
@@ -28,7 +39,7 @@ export class AuthController {
   @TryCatch()
   async login(
     @Auth() auth: AppSession,
-    @Body() body: SignInPayload,
+    @Body() body: AuthLoginRequestPayload,
     @Res() res: Response,
   ) {
     if (auth) {
@@ -39,8 +50,7 @@ export class AuthController {
     }
 
     if (!body) throw new Error();
-    const extractedFieldValues =
-      UserRepo.extractFieldValue<ProcessedSignInCredentials>(body);
+    const extractedFieldValues = extractFieldValue<AuthLoginCredentials>(body);
 
     const recievedUser = await this.userService.getUser(extractedFieldValues);
     if (!recievedUser) {

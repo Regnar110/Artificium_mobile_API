@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ProcessedUser } from 'src/lgcy/components/UserComponent/models/user.model';
 import * as fs from 'fs';
 import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
+import { AuthLoginDatabaseUser } from 'src/User/types/auth.types';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
     return publicPemKey;
   }
 
-  async generateJWT(userPayload: ProcessedUser) {
+  async generateJWT(userPayload: AuthLoginDatabaseUser) {
     if (!userPayload)
       this.responseBuilder.throwInternalError(
         this.constructor.name,
@@ -46,7 +46,7 @@ export class AuthService {
     return access_token;
   }
 
-  verifyJWT(jwt: string): ProcessedUser | null {
+  verifyJWT(jwt: string): AuthLoginDatabaseUser | null {
     const publicKey = this.getJwtPublicKey();
     try {
       return this.jwtService.verify(jwt, {

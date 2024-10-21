@@ -5,7 +5,6 @@ export type AuthLoginRequestPayload = {
   fields: Pick<CreateUserRequestPayload['fields'], 'email' | 'password'>;
 };
 
-export type x = keyof AuthLoginRequestPayload;
 
 export interface AuthLoginCredentials {
   email: string;

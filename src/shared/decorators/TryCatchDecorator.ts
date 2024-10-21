@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ResponseBuilderService } from 'src/lgcy/domain/services/ResponseBuilder/responseBuilder.service';
+import { ResponseBuilderService } from '../services/ResponseBuilder/responseBuilder.service';
 
 type ServerResponseCustomType = {
   status: (status: number) => void;
@@ -16,12 +16,6 @@ type ServerResponseCustomType = {
  * HTTPS exceptions and response builder service.
  */
 
-interface ErrorConstructor extends HttpException {
-  new (message?: string): Error;
-  (message?: string): Error;
-  readonly prototype: Error;
-}
-
 export function TryCatch(errorConstructor?: typeof HttpException) {
   return function (
     _target: any,
@@ -33,12 +27,12 @@ export function TryCatch(errorConstructor?: typeof HttpException) {
       try {
         return await originalMethod.apply(this, args);
       } catch (error) {
-        console.log(error)
         const responseService: ResponseBuilderService = this.responseBuilder;
+
         const serverResponse: ServerResponseCustomType = args.find((arg) => {
-          console.log(arg)
           return arg.constructor.name === 'ServerResponse';
         });
+
         if (!serverResponse) {
           if (errorConstructor) {
             throw new HttpException(

@@ -1,4 +1,4 @@
-import { AgreementContentInterface } from 'src/MongoDB/Schemas/user/schema.model';
+import { AgreementContentInterface } from './agreements.types';
 
 export interface CreateUserRequestPayload {
   formId: string;

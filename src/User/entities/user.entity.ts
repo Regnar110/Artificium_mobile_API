@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { AgreementSchema } from 'src/MongoDB/Schemas/user/agreements.schema';
+import { RegisterAgreementSchema } from './registerAgreement.entity';
 
 interface AgreementContentInterface {
   agreementField: string;
@@ -23,7 +23,7 @@ export class User {
   @Prop()
   password: string;
 
-  @Prop({ type: [AgreementSchema] })
+  @Prop({ type: [RegisterAgreementSchema] })
   agreementFields: AgreementContentInterface[];
 
   @Prop()

@@ -1,8 +1,11 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthenticationService } from 'src/lgcy/domain/services/Authentication/authentication.service';
 import { RedisService } from '../services/redis/redis.service';
 import { ResponseBuilderService } from '../services/ResponseBuilder/responseBuilder.service';
+import { AuthLoginDatabaseUser } from 'src/User/types/auth.types';
+import { AuthService } from 'src/User/domains/auth/services/auth.service';
+
+export type AppSession = AuthLoginDatabaseUser | null;
 
 export const Auth = createParamDecorator(
   async (data: unknown, context: ExecutionContext) => {
@@ -10,7 +13,7 @@ export const Auth = createParamDecorator(
     const jwtService = new JwtService();
     const redisService = new RedisService();
     const responseService = new ResponseBuilderService();
-    const authService = new AuthenticationService(jwtService, responseService);
+    const authService = new AuthService(jwtService, responseService);
     const token = request.headers.authorization?.split(' ')[1];
     const decodedJWTData = await authService.verifyJWT(token);
 

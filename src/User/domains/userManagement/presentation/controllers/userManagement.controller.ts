@@ -1,16 +1,15 @@
 import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { UserResponses } from 'src/lgcy/components/UserComponent/controller/authentication/responses';
-import { EmailExistResponseData } from 'src/lgcy/components/UserComponent/controller/authentication/responses.model';
-import { RegisterPayload } from 'src/lgcy/components/UserComponent/models/user.model';
-import UserRepo from 'src/lgcy/components/UserComponent/utils/user.util';
-import { AppSession } from 'src/lgcy/domain/services/Authentication/auth.model';
-import { Auth } from 'src/shared/decorators/AuthBearer.decorator';
+import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
 import { TryCatch } from 'src/shared/decorators/TryCatchDecorator';
 import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
 import { User } from 'src/User/entities/user.entity';
 import { UserService } from '../../services/user.service';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
+import { CreateUserRequestPayload } from 'src/User/types/createUser.types';
+import { UserResponses } from 'src/User/common/responses';
+import { EmailExistResponseData } from 'src/User/types/responses.types';
+import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 
 @Controller('userManagement')
 export class UserManagementController {
@@ -25,10 +24,9 @@ export class UserManagementController {
   @TryCatch()
   async register(
     @Auth() auth: AppSession,
-    @Body() body: RegisterPayload,
+    @Body() body: CreateUserRequestPayload,
     @Res() res: Response,
   ) {
-    console.log(auth)
     if (auth) {
       const response = this.responseBuilder.buildStandardResponse(
         UserResponses.unauthorized,
@@ -56,7 +54,7 @@ export class UserManagementController {
     delete body.fields.repeatpassword;
 
     const createdUser = await this.usersService.createUser(
-      UserRepo.extractFieldValue<User>(body),
+      extractFieldValue<User>(body),
     );
     if ('email' in createdUser) {
       const response = this.responseBuilder.buildStandardResponse<{
