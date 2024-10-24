@@ -1,8 +1,7 @@
-import { LoginDto } from 'src/User/domains/userManagement/presentation/dto/login.dto';
-import { AuthLoginRequestPayload } from 'src/User/types/auth.types';
+import { LoginPayloadDto } from 'src/User/domains/auth/presentation/dto/authLoginPayloadDto/loginPayload.dto';
 import { CreateUserRequestPayload } from 'src/User/types/createUser.types';
 
-type ExtractFieldValueDataType = LoginDto | CreateUserRequestPayload;
+type ExtractFieldValueDataType = LoginPayloadDto | CreateUserRequestPayload;
 
 export function extractFieldValue<ReturnT>(
   data: ExtractFieldValueDataType,

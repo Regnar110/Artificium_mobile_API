@@ -15,12 +15,13 @@ import {
   Get,
   HttpStatus,
   Req,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UserResponses } from 'src/User/common/responses';
 import { AuthLoginCredentials } from 'src/User/types/auth.types';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
-import { LoginDto } from 'src/User/domains/userManagement/presentation/dto/login.dto';
+import { LoginPayloadDto } from '../dto/authLoginPayloadDto/loginPayload.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -37,10 +38,9 @@ export class AuthController {
   @TryCatch()
   async login(
     @Auth() auth: AppSession,
-    @Body() body: LoginDto,
+    @Body(new ValidationPipe()) body: LoginPayloadDto,
     @Res() res: Response,
   ) {
-    console.log(body)
     if (auth) {
       const response = this.responseBuilder.buildStandardResponse(
         UserResponses.unauthorized,
