@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
 import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
 import { TryCatch } from 'src/shared/decorators/TryCatchDecorator';
@@ -10,6 +10,8 @@ import { CreateUserRequestPayload } from 'src/User/types/createUser.types';
 import { UserResponses } from 'src/User/common/responses';
 import { EmailExistResponseData } from 'src/User/types/responses.types';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
+import { RegisterPayloadFields } from '../dto/registerPayloadFields';
+import { RegisterPayload } from '../dto/registerPayload';
 
 @Controller('userManagement')
 export class UserManagementController {
@@ -24,7 +26,7 @@ export class UserManagementController {
   @TryCatch()
   async register(
     @Auth() auth: AppSession,
-    @Body() body: CreateUserRequestPayload,
+    @Body(new ValidationPipe()) body: RegisterPayload,
     @Res() res: Response,
   ) {
     if (auth) {

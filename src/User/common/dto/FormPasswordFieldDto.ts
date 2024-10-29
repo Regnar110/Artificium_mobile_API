@@ -1,7 +1,6 @@
 import { IsString, IsNotEmpty, Contains } from 'class-validator';
-import { AuthLoginUserPasswordInterface } from '../../../types';
 
-export class LoginPayloadPassword implements AuthLoginUserPasswordInterface {
+export class FormPasswordField {
   @IsString()
   @IsNotEmpty()
   @Contains('password')

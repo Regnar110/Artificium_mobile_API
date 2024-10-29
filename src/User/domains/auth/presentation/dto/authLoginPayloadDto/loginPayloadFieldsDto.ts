@@ -1,14 +1,14 @@
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { LoginPayloadEmail } from './loginPayloadEmailDto';
-import { LoginPayloadPassword } from './loginPayloadPasswordDto';
+import { FormEmailField } from 'src/User/common/dto/FormEmailFieldDto';
+import { FormPasswordField } from 'src/User/common/dto/FormPasswordFieldDto';
 
 export class LoginPayloadFields {
   @ValidateNested()
-  @Type(() => LoginPayloadEmail)
-  email: LoginPayloadEmail;
+  @Type(() => FormEmailField)
+  email: FormEmailField;
 
   @ValidateNested()
-  @Type(() => LoginPayloadPassword)
-  password: LoginPayloadPassword;
+  @Type(() => FormPasswordField)
+  password: FormPasswordField;
 }

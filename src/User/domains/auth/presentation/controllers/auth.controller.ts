@@ -89,7 +89,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout(
     @Auth() auth: AppSession,
-    @Req() req: Request,
+    @Req() _req: Request,
     @Res() res: Response,
   ) {
     if (!auth) {
