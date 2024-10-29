@@ -3,50 +3,14 @@ import {
   Contains,
   IsNotEmpty,
   IsString,
-  registerDecorator,
   ValidateNested,
-  ValidationArguments,
-  ValidationOptions,
 } from 'class-validator';
+import { Match } from 'src/shared/decorators/ClassValidatorDecorators/Match';
+import { UserDomainFieldInterface } from 'src/shared/types';
 import { FormEmailField } from 'src/User/common/dto/FormEmailFieldDto';
 import { FormPasswordField } from 'src/User/common/dto/FormPasswordFieldDto';
 
-export function Match(
-  basePropertyPath: string,
-  propertyPath: string,
-  validationOptions?: ValidationOptions,
-) {
-  return function (object: Object, propertyName: string) {
-    registerDecorator({
-      name: 'match',
-      target: object.constructor,
-      propertyName: propertyName,
-      options: validationOptions,
-      constraints: [propertyPath],
-      validator: {
-        validate(value: any, args: ValidationArguments) {
-          const [relatedPropertyPath] = args.constraints;
-          const basePropertyValue = value[basePropertyPath];
-          const relatedValue = getNestedProperty(
-            args.object,
-            relatedPropertyPath,
-          );
-
-          return basePropertyValue === relatedValue;
-        },
-        defaultMessage(args: ValidationArguments) {
-          return `${args.property} must match ${args.constraints[0]}`;
-        },
-      },
-    });
-  };
-}
-
-function getNestedProperty(object: any, propertyPath: string) {
-  return propertyPath.split('.').reduce((o, p) => (o ? o[p] : null), object);
-}
-
-class FirstNameField {
+class FirstNameField implements UserDomainFieldInterface {
   @IsString()
   @IsNotEmpty()
   @Contains('firstname')
@@ -57,7 +21,7 @@ class FirstNameField {
   value: string;
 }
 
-class LastNameField {
+class LastNameField implements UserDomainFieldInterface {
   @IsString()
   @IsNotEmpty()
   @Contains('lastname')
@@ -68,7 +32,7 @@ class LastNameField {
   value: string;
 }
 
-class RepeatPasswordField {
+class RepeatPasswordField implements UserDomainFieldInterface {
   @IsString()
   @IsNotEmpty()
   @Contains('repeatpassword')
@@ -80,6 +44,7 @@ class RepeatPasswordField {
 }
 
 export class RegisterPayloadFields {
+  formId: string;
   @ValidateNested()
   @Type(() => FormEmailField)
   email: FormEmailField;

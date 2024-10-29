@@ -50,7 +50,6 @@ export class AuthController {
 
     if (!body) throw new Error();
     const extractedFieldValues = extractFieldValue<AuthLoginCredentials>(body);
-
     const recievedUser = await this.userService.getUser(extractedFieldValues);
     if (!recievedUser) {
       const response = this.responseBuilder.buildStandardResponse(

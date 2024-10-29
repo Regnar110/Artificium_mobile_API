@@ -1,4 +1,3 @@
-import { AgreementContentInterface } from 'src/User/types/agreements.types';
 import { RegisterPayloadFields } from './registerPayloadFields';
 import { Type } from 'class-transformer';
 import {
@@ -7,17 +6,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { RegisterPayloadInterface } from 'src/User/types/createUser.types';
 
-export class CreateUserDto {
-  readonly email: string;
-  readonly firstname: string;
-  readonly lastname: string;
-  readonly password: string;
-  readonly agreementFields: AgreementContentInterface[];
-  readonly friendList: Array<string>;
-}
-
-export class RegisterPayload {
+export class RegisterPayloadDto implements RegisterPayloadInterface {
   @IsString()
   @IsNotEmpty()
   @Contains('registerForm')

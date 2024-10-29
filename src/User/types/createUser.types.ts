@@ -1,13 +1,29 @@
+import { UserDomainFieldInterface } from 'src/shared/types';
 import { AgreementContentInterface } from './agreements.types';
 
-export interface CreateUserRequestPayload {
+/**
+ * @interface CreateUserPayload
+ * Used in user.service on createUser method as argument type
+ */
+export interface CreateUserPayload {
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+}
+
+/**
+ * @interface RegisterPayloadInterface
+ * Used as contract for RegisterPayloadDto
+ */
+export interface RegisterPayloadInterface {
   formId: string;
   fields: {
-    email: { id: 'email'; value: string };
-    firstname: { id: 'firstname'; value: string };
-    lastname: { id: 'lastname'; value: string };
-    password: { id: 'password'; value: string };
-    repeatpassword: { id: 'repeatpassword'; value: string };
+    email: UserDomainFieldInterface;
+    firstname: UserDomainFieldInterface;
+    lastname: UserDomainFieldInterface;
+    password: UserDomainFieldInterface;
+    repeatpassword: UserDomainFieldInterface;
   };
-  agreementFields: AgreementContentInterface[];
+  // agreementFields: AgreementContentInterface[];
 }

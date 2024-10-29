@@ -1,7 +1,7 @@
 import { LoginPayloadDto } from 'src/User/domains/auth/presentation/dto/authLoginPayloadDto/loginPayload.dto';
-import { CreateUserRequestPayload } from 'src/User/types/createUser.types';
-
-type ExtractFieldValueDataType = LoginPayloadDto | CreateUserRequestPayload;
+import { RegisterPayloadDto } from 'src/User/domains/userManagement/presentation/dto/registerPayload';
+import { User } from 'src/User/entities/user.entity';
+type ExtractFieldValueDataType = LoginPayloadDto | RegisterPayloadDto;
 
 export function extractFieldValue<ReturnT>(
   data: ExtractFieldValueDataType,
@@ -13,9 +13,9 @@ export function extractFieldValue<ReturnT>(
   }
   delete transformedObject['repeatpassword'];
 
-  if ('agreementFields' in data) {
-    transformedObject['agreementFields'] = [...data.agreementFields];
-  }
+  // if ('agreementFields' in data) {
+  //   transformedObject['agreementFields'] = [...data.agreementFields];
+  // }
 
   return transformedObject as ReturnT;
 }

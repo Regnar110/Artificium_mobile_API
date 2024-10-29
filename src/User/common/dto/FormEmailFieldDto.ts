@@ -1,6 +1,7 @@
 import { IsString, IsNotEmpty, Contains, IsEmail } from 'class-validator';
+import { UserDomainFieldInterface } from 'src/shared/types';
 
-export class FormEmailField {
+export class FormEmailField implements UserDomainFieldInterface {
   @IsString()
   @IsNotEmpty()
   @Contains('email')

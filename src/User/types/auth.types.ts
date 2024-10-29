@@ -1,8 +1,8 @@
 import { User } from '../entities/user.entity';
-import { CreateUserRequestPayload } from './createUser.types';
+import { RegisterPayloadInterface } from './createUser.types';
 
 export type AuthLoginRequestPayload = {
-  fields: Pick<CreateUserRequestPayload['fields'], 'email' | 'password'>;
+  fields: Pick<RegisterPayloadInterface['fields'], 'email' | 'password'>;
 };
 
 export interface AuthLoginCredentials {

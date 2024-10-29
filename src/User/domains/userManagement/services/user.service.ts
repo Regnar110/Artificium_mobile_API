@@ -2,7 +2,8 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/User/entities/user.entity';
-import { CreateUserDto } from '../presentation/dto/registerPayload';
+import { RegisterPayloadDto } from '../presentation/dto/registerPayload';
+import { CreateUserPayload } from 'src/User/types/createUser.types';
 
 /**
  * @injectable - means that this class knows, that it can be injected to other classes which needs functionality from this class.
@@ -14,7 +15,7 @@ export class UserService {
     private userModel: Model<User>,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserPayload): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
