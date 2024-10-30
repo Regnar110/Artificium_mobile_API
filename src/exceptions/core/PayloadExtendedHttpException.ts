@@ -1,5 +1,5 @@
 import { HttpException, HttpExceptionOptions } from '@nestjs/common';
-import { ResponsePayloadDto } from 'src/shared/services/ResponseBuilder2/ResponsePayloadBuilder';
+import { ResponsePayloadDto } from 'src/shared/dto/ResponseDtoBuilder/ResponseDtoPayloadBuilder';
 
 export class PayloadExtendedHttpException extends HttpException {
   payload: ResponsePayloadDto;

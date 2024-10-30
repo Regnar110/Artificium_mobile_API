@@ -1,7 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from '../services/redis/redis.service';
-import { ResponseBuilderService } from '../services/ResponseBuilder/responseBuilder.service';
 import { AuthLoginDatabaseUser } from 'src/User/types/auth.types';
 import { AuthService } from 'src/User/domains/auth/services/auth.service';
 

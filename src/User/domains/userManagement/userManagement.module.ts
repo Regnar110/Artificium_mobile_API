@@ -3,7 +3,6 @@ import { UserManagementController } from './presentation/controllers/userManagem
 import { UserService } from './services/user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/User/entities/user.entity';
-import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { RedisService } from 'src/shared/services/redis/redis.service';
 
@@ -17,6 +16,6 @@ import { RedisService } from 'src/shared/services/redis/redis.service';
     ]),
   ],
   controllers: [UserManagementController],
-  providers: [UserService, ResponseBuilderService, BcryptService, RedisService],
+  providers: [UserService, BcryptService, RedisService],
 })
 export class UserManagementModule {}

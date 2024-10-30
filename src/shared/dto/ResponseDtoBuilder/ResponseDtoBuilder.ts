@@ -1,5 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
-import { ResponsePayloadDto, ResponsePayload } from './ResponsePayloadBuilder';
+import {
+  ResponsePayloadDto,
+  ResponseDtoPayloadBuilder,
+} from './ResponseDtoPayloadBuilder';
 
 interface ResponseInterface {
   status: HttpStatus;
@@ -7,14 +10,13 @@ interface ResponseInterface {
   payload: ResponsePayloadDto;
 }
 
-class ResponseDto {
+export class ResponseDto {
   readonly status: HttpStatus;
   readonly message: string;
   readonly payload: ResponsePayloadDto;
 }
 
-
-export class ResponseBuilder implements ResponseInterface {
+export class ResponseDtoBuilder implements ResponseInterface {
   readonly status: HttpStatus;
   readonly message: string;
   readonly payload: ResponsePayloadDto;
@@ -22,6 +24,6 @@ export class ResponseBuilder implements ResponseInterface {
   constructor({ status, message, payload }: ResponseDto) {
     this.status = status;
     this.message = message;
-    this.payload = new ResponsePayload(payload);
+    this.payload = new ResponseDtoPayloadBuilder(payload);
   }
 }

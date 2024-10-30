@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { PayloadExtendedHttpException } from 'src/exceptions/core/PayloadExtendedHttpException';
-import { ResponsePayloadDto } from 'src/shared/services/ResponseBuilder2/ResponsePayloadBuilder';
+import { ResponsePayloadDto } from 'src/shared/dto/ResponseDtoBuilder/ResponseDtoPayloadBuilder';
 
 const exceptionDefaultPayload: ResponsePayloadDto = {
   data: {

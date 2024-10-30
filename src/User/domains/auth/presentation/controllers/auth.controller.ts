@@ -1,7 +1,6 @@
 import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { RedisService } from 'src/shared/services/redis/redis.service';
-import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
 import { UserService } from 'src/User/domains/userManagement/services/user.service';
 import { AuthService } from '../../services/auth.service';
 import {
@@ -17,7 +16,6 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UserResponses } from 'src/User/common/responses';
 import { AuthLoginCredentials } from 'src/User/types/auth.types';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 import { LoginPayloadDto } from '../dto/authLoginPayloadDto/loginPayload.dto';
@@ -25,11 +23,12 @@ import { UnauthorizedCustomException } from 'src/exceptions/UnauthorizedCustomEx
 import { CustomHttpExceptionFilter } from 'src/exceptions/core/CustomHttpExceptionFilter';
 import { WrongCredentialsException } from '../exceptions/WrongCredentialsException';
 import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
+import { AuthorizedResponse } from '../responses/AuthorizedResponse';
+import { LogoutResponse } from '../responses/LogoutResponse';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly responseBuilder: ResponseBuilderService,
     private readonly userService: UserService,
     private readonly bcryptService: BcryptService,
     private readonly redisService: RedisService,
@@ -70,13 +69,7 @@ export class AuthController {
       await this.authenticationService.generateJWT(recievedUser);
     await this.redisService.setKeyValuePair(recievedUser._id, access_token);
 
-    const jwtResponse = UserResponses.signinForm.authorized;
-    jwtResponse.payload.data.jwt = access_token;
-
-    const controllerEndResponse =
-      this.responseBuilder.buildStandardResponse(jwtResponse);
-
-    res.status(controllerEndResponse.status).json(controllerEndResponse);
+    res.status(HttpStatus.OK).json(new AuthorizedResponse(access_token));
   }
 
   @Get('logout')
@@ -97,9 +90,6 @@ export class AuthController {
       throw new InternalServerErrorCustomException();
     }
 
-    const successResponse = this.responseBuilder.buildStandardResponse(
-      UserResponses.logout,
-    );
-    return res.status(successResponse.status).json(successResponse);
+    return res.status(HttpStatus.OK).json(new LogoutResponse());
   }
 }

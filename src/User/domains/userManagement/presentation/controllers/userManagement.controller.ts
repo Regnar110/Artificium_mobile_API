@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpStatus,
   Post,
   Res,
   UseFilters,
@@ -9,22 +10,20 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
-import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
 import { User } from 'src/User/entities/user.entity';
 import { UserService } from '../../services/user.service';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
-import { UserResponses } from 'src/User/common/responses';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 import { RegisterPayloadDto } from '../dto/registerPayload';
 import { CustomHttpExceptionFilter } from 'src/exceptions/core/CustomHttpExceptionFilter';
 import { UnauthorizedCustomException } from 'src/exceptions/UnauthorizedCustomException';
 import { EmailAlreadyExistException } from '../exceptions/EmailAlreadyExistException';
 import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
+import { UserCreatedResponse } from '../responses/UserCreatedResponse';
 
 @Controller('userManagement')
 export class UserManagementController {
   constructor(
-    private readonly responseBuilder: ResponseBuilderService,
     private readonly usersService: UserService,
     private readonly bcryptService: BcryptService,
   ) {}
@@ -60,10 +59,7 @@ export class UserManagementController {
     );
 
     if ('email' in createdUser) {
-      const response = this.responseBuilder.buildStandardResponse<{
-        clientMessage: string;
-      }>(UserResponses.registerForm.userCreated);
-      return res.status(response.status).json(response);
+      return res.status(HttpStatus.CREATED).json(new UserCreatedResponse());
     } else {
       throw new InternalServerErrorCustomException();
     }

@@ -7,7 +7,7 @@ export class ResponsePayloadDto implements ResponsePayloadInterface {
   readonly data: unknown;
 }
 
-export class ResponsePayload implements ResponsePayloadDto {
+export class ResponseDtoPayloadBuilder implements ResponsePayloadDto {
   redirect: string;
   data: unknown;
   constructor(payload: ResponsePayloadDto) {
