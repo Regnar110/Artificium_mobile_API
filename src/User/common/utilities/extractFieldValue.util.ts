@@ -1,6 +1,5 @@
 import { LoginPayloadDto } from 'src/User/domains/auth/presentation/dto/authLoginPayloadDto/loginPayload.dto';
 import { RegisterPayloadDto } from 'src/User/domains/userManagement/presentation/dto/registerPayload';
-import { User } from 'src/User/entities/user.entity';
 type ExtractFieldValueDataType = LoginPayloadDto | RegisterPayloadDto;
 
 export function extractFieldValue<ReturnT>(
