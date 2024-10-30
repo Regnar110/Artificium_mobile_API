@@ -4,19 +4,22 @@ import {
   HttpCode,
   Post,
   Res,
+  UseFilters,
   ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
-import { TryCatch } from 'src/shared/decorators/TryCatchDecorator';
 import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
 import { User } from 'src/User/entities/user.entity';
 import { UserService } from '../../services/user.service';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { UserResponses } from 'src/User/common/responses';
-import { EmailExistResponseData } from 'src/User/types/responses.types';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 import { RegisterPayloadDto } from '../dto/registerPayload';
+import { CustomHttpExceptionFilter } from 'src/exceptions/core/CustomHttpExceptionFilter';
+import { UnauthorizedCustomException } from 'src/exceptions/UnauthorizedCustomException';
+import { EmailAlreadyExistException } from '../exceptions/EmailAlreadyExistException';
+import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
 
 @Controller('userManagement')
 export class UserManagementController {
@@ -28,17 +31,14 @@ export class UserManagementController {
 
   @Post('register')
   @HttpCode(201)
-  @TryCatch()
+  @UseFilters(CustomHttpExceptionFilter)
   async register(
     @Auth() auth: AppSession,
     @Body(new ValidationPipe()) body: RegisterPayloadDto,
     @Res() res: Response,
   ) {
     if (auth) {
-      const response = this.responseBuilder.buildStandardResponse(
-        UserResponses.unauthorized,
-      );
-      return res.status(response.status).json(response);
+      throw new UnauthorizedCustomException();
     }
 
     const userWithEmailExist = await this.usersService.findUserWithEmail({
@@ -46,12 +46,7 @@ export class UserManagementController {
     });
 
     if (userWithEmailExist) {
-      const response =
-        this.responseBuilder.buildStandardResponse<EmailExistResponseData>(
-          UserResponses.registerForm.emailExist,
-        );
-
-      return res.status(response.status).json(response);
+      throw new EmailAlreadyExistException();
     }
 
     body.fields.password.value = await this.bcryptService.hashString(
@@ -70,10 +65,7 @@ export class UserManagementController {
       }>(UserResponses.registerForm.userCreated);
       return res.status(response.status).json(response);
     } else {
-      const response = this.responseBuilder.buildStandardResponse<{
-        clientMessage: string;
-      }>(UserResponses.registerForm.userNotCreated);
-      return res.status(response.status).json(response);
+      throw new InternalServerErrorCustomException();
     }
   }
 }

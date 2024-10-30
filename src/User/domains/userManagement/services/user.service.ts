@@ -2,7 +2,6 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/User/entities/user.entity';
-import { RegisterPayloadDto } from '../presentation/dto/registerPayload';
 import { CreateUserPayload } from 'src/User/types/createUser.types';
 
 /**

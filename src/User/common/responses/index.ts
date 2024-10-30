@@ -39,19 +39,6 @@ export const UserResponses = {
     },
   },
   signinForm: {
-    unauthorized: {
-      status: HttpStatus.UNAUTHORIZED,
-      message: 'Provided wrong credentials.',
-      payload: {
-        redirect: null,
-        data: {
-          formError: true,
-          formId: 'signinForm',
-          clientMessage: 'Provided wrong credentials.',
-          jwt: null,
-        },
-      },
-    },
     authorized: {
       status: HttpStatus.OK,
       message: 'OK',
@@ -64,14 +51,6 @@ export const UserResponses = {
           jwt: null,
         },
       },
-    },
-  },
-  unauthorized: {
-    status: HttpStatus.UNAUTHORIZED,
-    message: 'UNAUTHORIZED',
-    payload: {
-      redirect: null,
-      data: null,
     },
   },
   logout: {

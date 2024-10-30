@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
-import { ResponseBuilderService } from 'src/shared/services/ResponseBuilder/responseBuilder.service';
+import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
 import { AuthLoginDatabaseUser } from 'src/User/types/auth.types';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private responseBuilder: ResponseBuilderService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   getJwtPrivateKey() {
     const pemKey = fs.readFileSync('privateKey.pem');
@@ -22,18 +19,13 @@ export class AuthService {
   }
 
   async generateJWT(userPayload: AuthLoginDatabaseUser) {
-    if (!userPayload)
-      this.responseBuilder.throwInternalError(
-        this.constructor.name,
-        this.generateJWT.name,
-      );
+    if (!userPayload) {
+      throw new InternalServerErrorCustomException();
+    }
 
     const secretKey = this.getJwtPrivateKey();
     if (!secretKey) {
-      this.responseBuilder.throwInternalError(
-        this.constructor.name,
-        this.generateJWT.name,
-      );
+      throw new InternalServerErrorCustomException();
     }
 
     const access_token = this.jwtService.sign(

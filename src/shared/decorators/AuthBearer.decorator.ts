@@ -12,8 +12,7 @@ export const Auth = createParamDecorator(
     const request = context.switchToHttp().getRequest();
     const jwtService = new JwtService();
     const redisService = new RedisService();
-    const responseService = new ResponseBuilderService();
-    const authService = new AuthService(jwtService, responseService);
+    const authService = new AuthService(jwtService);
     const token = request.headers.authorization?.split(' ')[1];
     const decodedJWTData = await authService.verifyJWT(token);
 
