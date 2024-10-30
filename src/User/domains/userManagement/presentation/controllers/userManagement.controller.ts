@@ -6,20 +6,20 @@ import {
   Post,
   Res,
   UseFilters,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
 import { User } from 'src/User/entities/user.entity';
 import { UserService } from '../../services/user.service';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 import { RegisterPayloadDto } from '../dto/registerPayload';
 import { CustomHttpExceptionFilter } from 'src/exceptions/core/CustomHttpExceptionFilter';
-import { UnauthorizedCustomException } from 'src/exceptions/UnauthorizedCustomException';
 import { EmailAlreadyExistException } from '../exceptions/EmailAlreadyExistException';
 import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
 import { UserCreatedResponse } from '../responses/UserCreatedResponse';
+import { AuthenticatedUserGuard } from 'src/shared/guards/AuthenticatedUser.guard';
 
 @Controller('userManagement')
 export class UserManagementController {
@@ -30,16 +30,12 @@ export class UserManagementController {
 
   @Post('register')
   @HttpCode(201)
+  @UseGuards(AuthenticatedUserGuard)
   @UseFilters(CustomHttpExceptionFilter)
   async register(
-    @Auth() auth: AppSession,
     @Body(new ValidationPipe()) body: RegisterPayloadDto,
     @Res() res: Response,
   ) {
-    if (auth) {
-      throw new UnauthorizedCustomException();
-    }
-
     const userWithEmailExist = await this.usersService.findUserWithEmail({
       email: body.fields.email.value,
     });

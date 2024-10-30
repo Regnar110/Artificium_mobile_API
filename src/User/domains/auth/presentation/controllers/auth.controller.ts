@@ -1,4 +1,3 @@
-import { AppSession, Auth } from 'src/shared/decorators/AuthBearer.decorator';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { RedisService } from 'src/shared/services/redis/redis.service';
 import { UserService } from 'src/User/domains/userManagement/services/user.service';
@@ -14,17 +13,20 @@ import {
   Req,
   ValidationPipe,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthLoginCredentials } from 'src/User/types/auth.types';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 import { LoginPayloadDto } from '../dto/authLoginPayloadDto/loginPayload.dto';
-import { UnauthorizedCustomException } from 'src/exceptions/UnauthorizedCustomException';
 import { CustomHttpExceptionFilter } from 'src/exceptions/core/CustomHttpExceptionFilter';
 import { WrongCredentialsException } from '../exceptions/WrongCredentialsException';
 import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
 import { AuthorizedResponse } from '../responses/AuthorizedResponse';
 import { LogoutResponse } from '../responses/LogoutResponse';
+import { AuthenticatedUserGuard } from 'src/shared/guards/AuthenticatedUser.guard';
+import { UnauthenticatedUserGuard } from 'src/shared/guards/UnauthenticatedUser.guard';
+import { AuthRequest } from 'src/shared/types';
 
 @Controller('auth')
 export class AuthController {
@@ -37,16 +39,12 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
+  @UseGuards(AuthenticatedUserGuard)
   @UseFilters(CustomHttpExceptionFilter)
   async login(
-    @Auth() auth: AppSession,
     @Body(new ValidationPipe()) body: LoginPayloadDto,
     @Res() res: Response,
   ) {
-    if (auth) {
-      throw new UnauthorizedCustomException();
-    }
-    if (!body) throw new Error();
     const extractedFieldValues = extractFieldValue<AuthLoginCredentials>(body);
     const recievedUser = await this.userService.getUser(extractedFieldValues);
     if (!recievedUser) {
@@ -75,16 +73,10 @@ export class AuthController {
   @Get('logout')
   @HttpCode(HttpStatus.OK)
   @UseFilters(CustomHttpExceptionFilter)
-  async logout(
-    @Auth() auth: AppSession,
-    @Req() _req: Request,
-    @Res() res: Response,
-  ) {
-    if (!auth) {
-      throw new UnauthorizedCustomException();
-    }
+  @UseGuards(UnauthenticatedUserGuard)
+  async logout(@Req() req: AuthRequest, @Res() res: Response) {
     const redisSessionRemoveResult: number =
-      await this.redisService.removeKeyValuePair(auth._id);
+      await this.redisService.removeKeyValuePair(req.auth._id);
 
     if (!redisSessionRemoveResult || redisSessionRemoveResult < 1) {
       throw new InternalServerErrorCustomException();
