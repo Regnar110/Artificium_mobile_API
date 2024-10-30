@@ -20,6 +20,7 @@ import { EmailAlreadyExistException } from '../exceptions/EmailAlreadyExistExcep
 import { InternalServerErrorCustomException } from 'src/exceptions/InternalServerErrorCustomException';
 import { UserCreatedResponse } from '../responses/UserCreatedResponse';
 import { AuthenticatedUserGuard } from 'src/shared/guards/AuthenticatedUser.guard';
+import { DtoResponse } from 'src/shared/types';
 
 @Controller('userManagement')
 export class UserManagementController {
@@ -34,7 +35,7 @@ export class UserManagementController {
   @UseFilters(CustomHttpExceptionFilter)
   async register(
     @Body(new ValidationPipe()) body: RegisterPayloadDto,
-    @Res() res: Response,
+    @Res() res: DtoResponse,
   ) {
     const userWithEmailExist = await this.usersService.findUserWithEmail({
       email: body.fields.email.value,

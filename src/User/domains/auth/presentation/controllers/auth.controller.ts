@@ -26,7 +26,7 @@ import { AuthorizedResponse } from '../responses/AuthorizedResponse';
 import { LogoutResponse } from '../responses/LogoutResponse';
 import { AuthenticatedUserGuard } from 'src/shared/guards/AuthenticatedUser.guard';
 import { UnauthenticatedUserGuard } from 'src/shared/guards/UnauthenticatedUser.guard';
-import { AuthRequest } from 'src/shared/types';
+import { AuthRequest, DtoResponse } from 'src/shared/types';
 
 @Controller('auth')
 export class AuthController {
@@ -43,7 +43,7 @@ export class AuthController {
   @UseFilters(CustomHttpExceptionFilter)
   async login(
     @Body(new ValidationPipe()) body: LoginPayloadDto,
-    @Res() res: Response,
+    @Res() res: DtoResponse,
   ) {
     const extractedFieldValues = extractFieldValue<AuthLoginCredentials>(body);
     const recievedUser = await this.userService.getUser(extractedFieldValues);
@@ -74,7 +74,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseFilters(CustomHttpExceptionFilter)
   @UseGuards(UnauthenticatedUserGuard)
-  async logout(@Req() req: AuthRequest, @Res() res: Response) {
+  async logout(@Req() req: AuthRequest, @Res() res: DtoResponse) {
     const redisSessionRemoveResult: number =
       await this.redisService.removeKeyValuePair(req.auth._id);
 
