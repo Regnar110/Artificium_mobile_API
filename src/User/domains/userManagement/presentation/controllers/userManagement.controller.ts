@@ -9,7 +9,6 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { User } from 'src/User/entities/user.entity';
 import { UserService } from '../../services/user.service';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
