@@ -15,7 +15,6 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { AuthLoginCredentials } from 'src/User/types/auth.types';
 import { extractFieldValue } from 'src/User/common/utilities/extractFieldValue.util';
 import { LoginPayloadDto } from '../dto/authLoginPayloadDto/loginPayload.dto';
