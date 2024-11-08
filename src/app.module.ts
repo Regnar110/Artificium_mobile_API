@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SocketFriendListModule } from './lgcy/components/SocketFriendListComponent/socket.module';
 import { SocketChatModule } from './lgcy/components/SocketChatComponent/socket.module';
 import { UserModule } from './User/user.module';
+import { SocketGatewayModule } from './SocketGateway/gateway.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './User/user.module';
     UserModule,
     SocketFriendListModule,
     SocketChatModule,
+    SocketGatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
